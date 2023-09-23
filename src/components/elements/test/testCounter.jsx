@@ -12,7 +12,7 @@ export default function TestCounter({changeCounter}) {
     const [buttonclrval, setButtonclrval] = useState('green')
     const [outval, setoutval] = useState(0)
     const [ovfval, setovfval] = useState('green')
-    const [selectedVal, setSelectedVal] = useState(1)
+    const [selectedVal, setSelectedVal] = useState(6)
     const [isRun, setIsRun] = useState(false)
 
     const [bitSelectVal, bitSetSelectVal] = useState(false)

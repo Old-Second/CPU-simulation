@@ -19,7 +19,7 @@ function App() {
                 <p2>D</p2>
                 <b>Rom</b></div>
             <div className="conductor2"></div>
-            <div className="DigitalTube1"><DigitalTube value={Math.floor(number / 10)}/></div>
+            <div className="DigitalTube1"><DigitalTube value={Math.floor((number % 100) / 10)}/></div>
             <div className="DigitalTube2"><DigitalTube value={number % 10}/></div>
 
             {/*<input type="number" onChange={(e) => {*/}

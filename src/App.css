@@ -9,8 +9,8 @@
     width: 75px;
     height: 100px;
     position: absolute;
-    top: 30vh;
-    left: 35vw;
+    top: 290px;
+    left: 675px;
 }
 
 .Rom > p1 {
@@ -27,30 +27,30 @@
 
 .DigitalTube1 {
     position: absolute;
-    top: 20vh;
-    left: 45vw;
+    top: 191px;
+    left: 864px;
     transform: scale(0.7);
 }
 
 .DigitalTube2 {
     position: absolute;
-    top: 20vh;
-    left: 50vw;
+    top: 191px;
+    left: 960px;
     transform: scale(0.7);
 }
 
 .conductor1 {
     border-top: solid 3px blue;
-    width: 180px;
-    top: 34vh;
-    left: 25.8vw;
+    width: 185px;
+    top: 310px;
+    left: 490px;
     position: absolute;
 }
 
 .conductor2 {
     border-top: solid 3px blue;
     width: 200px;
-    top: 36vh;
-    left: 39.2vw;
+    top: 344px;
+    left: 754px;
     position: absolute;
 }

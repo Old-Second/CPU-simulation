@@ -1,0 +1,56 @@
+.count {
+    position: absolute;
+    top: 0vh;
+    left: 0vw;
+}
+
+.Rom {
+    border: 4px solid #0000FF;
+    width: 75px;
+    height: 100px;
+    position: absolute;
+    top: 30vh;
+    left: 35vw;
+}
+
+.Rom > p1 {
+    position: absolute;
+    top: 23px;
+    left: 3px;
+}
+
+.Rom > p2 {
+    position: absolute;
+    top: 42px;
+    left: 60px;
+}
+
+.DigitalTube1 {
+    position: absolute;
+    top: 20vh;
+    left: 45vw;
+    transform: scale(0.7);
+}
+
+.DigitalTube2 {
+    position: absolute;
+    top: 20vh;
+    left: 50vw;
+    transform: scale(0.7);
+}
+
+.conductor1 {
+    border-top: solid 3px blue;
+    width: 180px;
+    top: 34vh;
+    left: 25.8vw;
+    position: absolute;
+}
+
+.conductor2 {
+    border-top: solid 3px blue;
+    width: 200px;
+    top: 36vh;
+    left: 39.2vw;
+    position: absolute;
+}

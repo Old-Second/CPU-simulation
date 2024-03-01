@@ -51,12 +51,9 @@ const Adder = () => {
     }, [adderInput, adderData.dataBits, nodeId, updateData]);
     
     const [open, setOpen] = useState(false);
-    const openEditAdder = () => {
-      setOpen(true);
-    };
-    const closeEditAdder = () => {
-      setOpen(false);
-    };
+    const openEditAdder = () => setOpen(true);
+    const closeEditAdder = () => setOpen(false);
+    
     
     // 处理表单提交
     const handleSubmit = (values: { label: string; dataBits: number; }) => {

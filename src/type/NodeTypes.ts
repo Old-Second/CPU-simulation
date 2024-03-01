@@ -5,6 +5,7 @@ import Adder from "../Components/Adder/Adder.tsx";
 import Multiplexer from "../Components/Multiplexer/Multiplexer.tsx";
 import One from "../Components/One/One.tsx";
 import Zero from "../Components/Zero/Zero.tsx";
+import Ram from "../Components/Ram/Ram.tsx";
 
 export const NodeTypes = {
   // circuitNode: CircuitNode,
@@ -12,6 +13,7 @@ export const NodeTypes = {
   // userom: UseRom,
   digitalTube: DigitalTube,
   rom: Rom,
+  ram: Ram,
   adder: Adder,
   multiplexer: Multiplexer,
   one: One,

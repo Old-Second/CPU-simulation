@@ -37,12 +37,8 @@ const Multiplexer = () => {
   }, [multiplexerInput, multiplexerData.dataBits, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
-  const openEditMultiplexer = () => {
-    setOpen(true);
-  };
-  const closeEditMultiplexer = () => {
-    setOpen(false);
-  };
+  const openEditMultiplexer = () => setOpen(true);
+  const closeEditMultiplexer = () => setOpen(false);
   
   // 处理表单提交
   const handleSubmit = (values: { label: string; dataBits: number; numberOfSelectorBits: number; }) => {

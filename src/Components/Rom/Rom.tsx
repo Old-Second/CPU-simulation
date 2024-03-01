@@ -19,7 +19,7 @@ const Rom = () => {
     addressBits: number;
     label: string,
     dataSource: { [address: string]: number; }
-  }>({addressBits: 1, dataBits: 1, label: "Rom", dataSource: {}});
+  }>({addressBits: 1, dataBits: 1, label: "ROM", dataSource: {}});
   
   // 当数据或节点 ID 更改时更新 A 和 sel
   useEffect(() => {
@@ -38,12 +38,8 @@ const Rom = () => {
   }, [romInput, nodeId, romData, updateData]);
   
   const [open, setOpen] = useState(false);
-  const openEditRom = () => {
-    setOpen(true);
-  }
-  const closeEditRom = () => {
-    setOpen(false);
-  }
+  const openEditRom = () => setOpen(true);
+  const closeEditRom = () => setOpen(false);
   
   // 处理表单提交
   const handleSubmit = (data: {
@@ -192,7 +188,6 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
             />
           )}
         />
-      
       </Table>
     </Modal>
   );

@@ -1,0 +1,42 @@
+.ram {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border: 5px solid black;
+    position: absolute;
+}
+
+.ram-port {
+    position: absolute;
+    margin: 0;
+}
+
+.ram-A {
+    left: 10px;
+    top: calc(10% - 11px);
+}
+
+.ram-Din {
+    left: 10px;
+    top: calc(30% - 11px);
+}
+
+.ram-str {
+    left: 10px;
+    top: calc(50% - 11px);
+}
+
+.ram-C {
+    left: 10px;
+    top: calc(70% - 11px);
+}
+
+.ram-ld {
+    left: 10px;
+    top: calc(90% - 11px);
+}
+
+.ram-D {
+    right: 10px;
+    top: calc(50% - 11px);
+}

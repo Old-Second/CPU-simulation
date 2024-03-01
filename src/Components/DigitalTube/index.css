@@ -1,0 +1,126 @@
+.seven-segment-display {
+    display: inline-block;
+    width: 150px; /* 调整数码管的宽度 */
+    height: 300px; /* 调整数码管的高度 */
+    background-color: black;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.segment {
+    width: 30px; /* 调整数码管段的宽度 */
+    height: 60px; /* 调整数码管段的高度 */
+    background-color: #1abc9c; /* 调整数码管段的颜色 */
+    position: absolute;
+    float: left;
+    margin: 5px; /* 调整数码管段之间的间距 */
+    transform: translateX(-15px) translateY(20px);
+    /*transform: translateY(-15px);*/
+}
+
+.segment::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+.segment-0 {
+    transform: rotate(90deg) translateX(10px) translateY(15px);
+    top: 20px;
+    left: 70px; /* 调整数码管段0的位置 */
+}
+
+.segment-0::before {
+    border-width: 0 0 15px 15px;
+    border-color: transparent transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+.segment-1 {
+    top: 60px; /* 调整数码管段1的位置 */
+    left: 20px;
+}
+
+.segment-1::before {
+    border-width: 15px 0 15px 15px;
+    border-color: #1abc9c transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+.segment-2 {
+    top: 130px; /* 调整数码管段2的位置 */
+    left: 20px;
+}
+
+.segment-2::before {
+    border-width: 15px 0 15px 15px;
+    border-color: #1abc9c transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+.segment-3 {
+    transform: rotate(90deg) translateX(15px) translateY(15px);
+    top: 100px; /* 调整数码管段3的位置 */
+    left: 70px; /* 调整数码管段3的位置 */
+}
+
+.segment-3::before {
+    border-width: 0 0 15px 15px;
+    border-color: transparent transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+.segment-4 {
+    top: 130px; /* 调整数码管段4的位置 */
+    left: 120px; /* 调整数码管段4的位置 */
+}
+
+.segment-4::before {
+    border-width: 15px 0 15px 15px;
+    border-color: #1abc9c transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+.segment-5 {
+    top: 60px; /* 调整数码管段5的位置 */
+    left: 120px; /* 调整数码管段5的位置 */
+}
+
+.segment-5::before {
+    border-width: 15px 0 15px 15px;
+    border-color: #1abc9c transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+.segment-6 {
+    transform: rotate(90deg) translateX(30px) translateY(15px);
+    top: 170px;
+    left: 70px;
+}
+
+.segment-6::before {
+    border-width: 15px 0 15px 15px;
+    border-color: #1abc9c transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+
+/* 可能的其他字符样式定义 */
+
+.segment-dot {
+/ / 小数点的样式定义
+}
+
+.segment-minus {
+/ / 减号的样式定义
+}

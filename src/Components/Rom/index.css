@@ -1,0 +1,27 @@
+.rom {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border: 5px solid black;
+    position: absolute;
+}
+
+.rom-port {
+    position: absolute;
+    margin: 0;
+}
+
+.rom-A {
+    left: 10px;
+    top: calc(33% - 11px);
+}
+
+.rom-sel {
+    left: 10px;
+    top: calc(66% - 11px);
+}
+
+.rom-D {
+    right: 10px;
+    top: calc(50% - 11px);
+}

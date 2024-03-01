@@ -1,21 +1,23 @@
 import './index.css';
-import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
+import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
 import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
-import {Form, InputNumber, Input, message, Modal} from "antd";
+import {Form, InputNumber, Input, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Multiplexer = () => {
   const {data, updateData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
+  const updateNodeInternals = useUpdateNodeInternals();
   const [multiplexerInput, setMultiplexerInput] = useState<{ input: number[]; sel: number; }>({
     input: [],
     sel: 0
   });
   const [multiplexerData, setMultiplexerData] = useState({
     label: "Multiplexer",
+    rotation: 0,
     dataBits: 1,
     numberOfSelectorBits: 1
   });
@@ -41,8 +43,14 @@ const Multiplexer = () => {
   const closeEditMultiplexer = () => setOpen(false);
   
   // 处理表单提交
-  const handleSubmit = (values: { label: string; dataBits: number; numberOfSelectorBits: number; }) => {
+  const handleSubmit = (values: {
+    label: string;
+    rotation: number;
+    dataBits: number;
+    numberOfSelectorBits: number;
+  }) => {
     setMultiplexerData({...values});
+    updateNodeInternals(nodeId);
     void message.success('配置成功');
     closeEditMultiplexer();
   };
@@ -65,7 +73,7 @@ const Multiplexer = () => {
   return (
     <div className="multiplexer-container">
       <h3>{multiplexerData.label}</h3>
-      <div className="multiplexer">
+      <div className="multiplexer" style={{transform: `rotate(${-multiplexerData.rotation}deg)`}}>
         {/* 节点端口 */}
         <p className={'multiplexer-port multiplexer-0'}>0</p>
         
@@ -99,7 +107,7 @@ interface MultiplexerModalProps {
     dataBits: number;
     numberOfSelectorBits: number;
   };
-  onSubmit: (values: { label: string; dataBits: number; numberOfSelectorBits: number; }) => void;
+  onSubmit: (values: { label: string; rotation: number; dataBits: number; numberOfSelectorBits: number; }) => void;
 }
 
 const MultiplexerModal: React.FC<MultiplexerModalProps> = ({
@@ -133,6 +141,15 @@ const MultiplexerModal: React.FC<MultiplexerModalProps> = ({
           name="label" label="Label"
         >
           <Input/>
+        </Form.Item>
+        <Form.Item
+          name="rotation" label="Rotation"
+        >
+          <Select options={[
+            {value: 0, label: '0°'},
+            {value: 90, label: '90°'},
+            {value: 180, label: '180°'},
+            {value: 270, label: '270°'}]}/>
         </Form.Item>
         <Form.Item
           name="dataBits" label="Data Bits"

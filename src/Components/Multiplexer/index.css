@@ -1,0 +1,30 @@
+.multiplexer {
+    width: 90px;
+    height: var(--multiplexer-height, 100px);
+    background-color: black;
+    clip-path: polygon(0 0, 100% 25px, 100% calc(100% - 25px), 0% 100%);
+    position: absolute;
+}
+
+.multiplexer::before {
+    content: "";
+    width: 80px;
+    height: var(--multiplexer-before-height, 90px);
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    /*right: -5px;*/
+    /*bottom: -5px;*/
+    background-color: white;
+    clip-path: polygon(0 0, 100% 22px, 100% calc(100% - 22px), 0% 100%);
+}
+
+.multiplexer-port {
+    position: absolute;
+    margin: 0;
+}
+
+.multiplexer-0 {
+    left: 10px;
+    top: 10px;
+}

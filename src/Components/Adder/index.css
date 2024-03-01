@@ -1,0 +1,37 @@
+.adder {
+    width: 100px;
+    height: 100px;
+    border: 5px solid black;
+    background-color: white;
+    position: absolute;
+}
+
+.adder-port {
+    position: absolute;
+    margin: 0;
+}
+
+.adder-a {
+    left: 10px;
+    top: calc(20% - 11px);
+}
+
+.adder-b {
+    left: 10px;
+    top: calc(50% - 11px);
+}
+
+.adder-c_i {
+    left: 10px;
+    top: calc(80% - 11px);
+}
+
+.adder-s {
+    right: 10px;
+    top: calc(20% - 11px);
+}
+
+.adder-c_o {
+    right: 10px;
+    top: calc(50% - 11px);
+}

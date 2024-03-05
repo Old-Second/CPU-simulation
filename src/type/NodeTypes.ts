@@ -8,6 +8,8 @@ import Zero from "../Components/Zero/Zero.tsx";
 import Ram from "../Components/Ram/Ram.tsx";
 import Demultiplexer from "../Components/Demultiplexer/Demultiplexer.tsx";
 import Not from "../Components/Not/Not.tsx";
+import HandInput from "../Components/HandInput/HandInput.tsx";
+import Splitter from "../Components/Splitter/Splitter.tsx";
 
 export const NodeTypes = {
   // circuitNode: CircuitNode,
@@ -22,6 +24,8 @@ export const NodeTypes = {
   not: Not,
   one: One,
   zero: Zero,
+  handInput: HandInput,
+  splitter: Splitter,
 };
 // const edgeTypes = {
 //   step: {

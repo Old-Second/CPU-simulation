@@ -54,25 +54,17 @@ const Demultiplexer = () => {
     closeEditDemultiplexer();
   };
   
-  useEffect(() => {
-    // 计算高度值
-    const heightValue = 30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) + 1);
-    
-    // 获取容器元素
-    const container = document.querySelector('.demultiplexer-container') as HTMLElement;
-    
-    // 设置CSS变量
-    if (container) {
-      container.style.setProperty('--demultiplexer-before-height', `${heightValue}px`);
-      container.style.setProperty('--demultiplexer-height', `${heightValue + 10}px`);
-    }
-  }, [demultiplexerData.numberOfSelectorBits]);
-  
-  
   return (
     <div className="demultiplexer-container">
       <h3>{demultiplexerData.label}</h3>
-      <div className="demultiplexer" style={{transform: `rotate(${-demultiplexerData.rotation}deg)`}}>
+      <div className="demultiplexer" style={{
+        transform: `rotate(${-demultiplexerData.rotation}deg)`,
+        height: `${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) + 1) + 10}px`,
+      }}>
+        <style>
+          {`.demultiplexer::before { height: ${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) + 1)}px; }`}
+        </style>
+        
         {/* 节点端口 */}
         <p className={'demultiplexer-port demultiplexer-0'}>0</p>
         

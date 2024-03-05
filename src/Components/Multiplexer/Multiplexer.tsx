@@ -55,25 +55,18 @@ const Multiplexer = () => {
     closeEditMultiplexer();
   };
   
-  useEffect(() => {
-    // 计算高度值
-    const heightValue = 30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) + 1);
-    
-    // 获取容器元素
-    const container = document.querySelector('.multiplexer-container') as HTMLElement;
-    
-    // 设置CSS变量
-    if (container) {
-      container.style.setProperty('--multiplexer-before-height', `${heightValue}px`);
-      container.style.setProperty('--multiplexer-height', `${heightValue + 10}px`);
-    }
-  }, [multiplexerData.numberOfSelectorBits]);
-  
   
   return (
     <div className="multiplexer-container">
       <h3>{multiplexerData.label}</h3>
-      <div className="multiplexer" style={{transform: `rotate(${-multiplexerData.rotation}deg)`}}>
+      <div className="multiplexer" style={{
+        transform: `rotate(${-multiplexerData.rotation}deg)`,
+        height: `${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) + 1) + 10}px`,
+      }}>
+        <style>
+          {`.multiplexer::before { height: ${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) + 1)}px; }`}
+        </style>
+        
         {/* 节点端口 */}
         <p className={'multiplexer-port multiplexer-0'}>0</p>
         

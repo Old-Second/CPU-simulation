@@ -3,7 +3,7 @@ import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
 import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
-import {Form, InputNumber, message, Modal, Select} from "antd";
+import {Form, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
@@ -104,12 +104,12 @@ const NotModal: React.FC<NotModalProps> = ({open, closeEditNot, initialValues, o
             {value: 180, label: '180°'},
             {value: 270, label: '270°'}]}/>
         </Form.Item>
-        <Form.Item
-          name="dataBits" label="Data Bits"
-          rules={[{required: true, message: '请输入数据位数!'}]}
-        >
-          <InputNumber min={1} max={32}/>
-        </Form.Item>
+        {/*<Form.Item*/}
+        {/*  name="dataBits" label="Data Bits"*/}
+        {/*  rules={[{required: true, message: '请输入数据位数!'}]}*/}
+        {/*>*/}
+        {/*  <InputNumber min={1} max={32}/>*/}
+        {/*</Form.Item>*/}
       </Form>
     </Modal>
   );

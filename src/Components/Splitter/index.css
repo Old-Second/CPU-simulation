@@ -1,0 +1,23 @@
+.splitter-container {
+    position: relative;
+}
+
+.splitter {
+    width: 5px;
+    min-height: 40px;
+    border: 5px solid black;
+}
+
+.splitter-port-in {
+    margin: 0;
+    width: max-content;
+    left: -40px;
+    position: absolute;
+}
+
+.splitter-port-out {
+    margin: 0;
+    width: max-content;
+    right: -30px;
+    position: absolute;
+}

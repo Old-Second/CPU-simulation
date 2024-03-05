@@ -1,0 +1,32 @@
+.reg {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border: 5px solid black;
+    position: absolute;
+}
+
+.reg-port {
+    position: absolute;
+    margin: 0;
+}
+
+.reg-D {
+    left: 10px;
+    top: calc(20% - 11px);
+}
+
+.reg-C {
+    left: 10px;
+    top: calc(50% - 11px);
+}
+
+.reg-en {
+    left: 10px;
+    top: calc(80% - 11px);
+}
+
+.reg-Q {
+    right: 10px;
+    top: calc(50% - 11px);
+}

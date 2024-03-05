@@ -10,6 +10,7 @@ import Demultiplexer from "../Components/Demultiplexer/Demultiplexer.tsx";
 import Not from "../Components/Not/Not.tsx";
 import HandInput from "../Components/HandInput/HandInput.tsx";
 import Splitter from "../Components/Splitter/Splitter.tsx";
+import Reg from "../Components/Reg/Reg.tsx";
 
 export const NodeTypes = {
   // circuitNode: CircuitNode,
@@ -18,6 +19,7 @@ export const NodeTypes = {
   digitalTube: DigitalTube,
   rom: Rom,
   ram: Ram,
+  reg: Reg,
   adder: Adder,
   multiplexer: Multiplexer,
   demultiplexer: Demultiplexer,

@@ -59,12 +59,12 @@ const Multiplexer = () => {
   return (
     <div className="multiplexer-container">
       <h3>{multiplexerData.label}</h3>
-      <div className="multiplexer" style={{
+      <div className={`multiplexer ${nodeId}`} style={{
         transform: `rotate(${-multiplexerData.rotation}deg)`,
         height: `${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) + 1) + 10}px`,
       }}>
         <style>
-          {`.multiplexer::before { height: ${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) + 1)}px; }`}
+          {`.${nodeId}::before { height: ${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) + 1)}px; }`}
         </style>
         
         {/* 节点端口 */}

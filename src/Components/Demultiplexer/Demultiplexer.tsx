@@ -57,12 +57,12 @@ const Demultiplexer = () => {
   return (
     <div className="demultiplexer-container">
       <h3>{demultiplexerData.label}</h3>
-      <div className="demultiplexer" style={{
+      <div className={`demultiplexer ${nodeId}`} style={{
         transform: `rotate(${-demultiplexerData.rotation}deg)`,
         height: `${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) + 1) + 10}px`,
       }}>
         <style>
-          {`.demultiplexer::before { height: ${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) + 1)}px; }`}
+          {`.${nodeId}::before { height: ${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) + 1)}px; }`}
         </style>
         
         {/* 节点端口 */}

@@ -12,7 +12,6 @@ import {
   applyEdgeChanges,
 } from 'reactflow';
 
-import {initialNodes} from './nodes';
 import {DataState} from "../type/Data.ts";
 import {createWithEqualityFn} from "zustand/traditional";
 import {shallow} from "zustand/shallow";
@@ -33,7 +32,7 @@ export interface RFState {
 const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
   // eslint-disable-next-line
   // @ts-ignore
-  nodes: initialNodes,
+  nodes: [],
   edges: [],
   data: {},
   // 处理节点变化

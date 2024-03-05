@@ -1,5 +1,5 @@
-import TestCounter from "../Components/elements/use/testCounter.tsx";
-import DigitalTube from "../Components/DigitalTube/DigitalTube.tsx";
+// import TestCounter from "../Components/elements/use/testCounter.tsx";
+// import DigitalTube from "../Components/DigitalTube/DigitalTube.tsx";
 import Rom from "../Components/Rom/Rom.tsx";
 import Adder from "../Components/Adder/Adder.tsx";
 import Multiplexer from "../Components/Multiplexer/Multiplexer.tsx";
@@ -14,9 +14,9 @@ import Reg from "../Components/Reg/Reg.tsx";
 
 export const NodeTypes = {
   // circuitNode: CircuitNode,
-  counter: TestCounter,
+  // counter: TestCounter,
   // userom: UseRom,
-  digitalTube: DigitalTube,
+  // digitalTube: DigitalTube,
   rom: Rom,
   ram: Ram,
   reg: Reg,

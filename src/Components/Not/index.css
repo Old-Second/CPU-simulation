@@ -1,0 +1,20 @@
+.not {
+    display: flex;
+}
+
+.not-square {
+    width: 30px;
+    height: 30px;
+    border: 5px solid black;
+    background-color: white;
+    /*position: absolute;*/
+}
+
+.not-circle {
+    width: 30px;
+    height: 30px;
+    border: 5px solid black;
+    border-radius: 15px;
+    background-color: white;
+    /*position: absolute;*/
+}

@@ -1,0 +1,30 @@
+.demultiplexer {
+    width: 90px;
+    height: var(--demultiplexer-height, 100px);
+    background-color: black;
+    clip-path: polygon(100% 0, 0 25px, 0 calc(100% - 25px), 100% 100%);
+    position: absolute;
+}
+
+.demultiplexer::before {
+    content: "";
+    width: 80px;
+    height: var(--demultiplexer-before-height, 90px);
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    /*right: -5px;*/
+    /*bottom: -5px;*/
+    background-color: white;
+    clip-path: polygon(100% 0, 0 22px, 0 calc(100% - 22px), 100% 100%);
+}
+
+.demultiplexer-port {
+    position: absolute;
+    margin: 0;
+}
+
+.demultiplexer-0 {
+    right: 10px;
+    top: 10px;
+}

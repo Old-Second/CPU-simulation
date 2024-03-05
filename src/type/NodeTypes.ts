@@ -6,6 +6,8 @@ import Multiplexer from "../Components/Multiplexer/Multiplexer.tsx";
 import One from "../Components/One/One.tsx";
 import Zero from "../Components/Zero/Zero.tsx";
 import Ram from "../Components/Ram/Ram.tsx";
+import Demultiplexer from "../Components/Demultiplexer/Demultiplexer.tsx";
+import Not from "../Components/Not/Not.tsx";
 
 export const NodeTypes = {
   // circuitNode: CircuitNode,
@@ -16,6 +18,8 @@ export const NodeTypes = {
   ram: Ram,
   adder: Adder,
   multiplexer: Multiplexer,
+  demultiplexer: Demultiplexer,
+  not: Not,
   one: One,
   zero: Zero,
 };

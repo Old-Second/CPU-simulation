@@ -7,40 +7,39 @@ import {Form, InputNumber, Input, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
-const Multiplexer = () => {
+const Demultiplexer = () => {
   const {data, updateData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
-  const [multiplexerInput, setMultiplexerInput] = useState<{ input: number[]; sel: number; }>({
-    input: [],
+  const [demultiplexerInput, setDemultiplexerInput] = useState<{ input: number; sel: number; }>({
+    input: 0,
     sel: 0
   });
-  const [multiplexerData, setMultiplexerData] = useState({
-    label: "Multiplexer",
+  const [demultiplexerData, setDemultiplexerData] = useState({
+    label: "Demultiplexer",
     rotation: 0,
     dataBits: 1,
     numberOfSelectorBits: 1
   });
   
   useEffect(() => {
-      setMultiplexerInput({
-        input: Array.from({length: Math.pow(2, multiplexerData.numberOfSelectorBits)}, (_, index) =>
-          getData(nodeId, `input${index}`, data)
-        ),
+      setDemultiplexerInput({
+        input: getData(nodeId, `input`, data),
         sel: getData(nodeId, 'sel', data)
       })
-    }, [data, multiplexerData.numberOfSelectorBits, nodeId]
+    }, [data, demultiplexerData.numberOfSelectorBits, nodeId]
   );
   
   useEffect(() => {
-    const {input, sel} = multiplexerInput;
-    const out = input[sel];
-    updateData(nodeId, 'out', out);
-  }, [multiplexerInput, multiplexerData.dataBits, nodeId, updateData]);
+    const {input, sel} = demultiplexerInput;
+    // const out = input[sel];
+    updateData(nodeId, `out${sel}`, input)
+    // updateData(nodeId, 'out', out);
+  }, [demultiplexerInput, demultiplexerData.dataBits, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
-  const openEditMultiplexer = () => setOpen(true);
-  const closeEditMultiplexer = () => setOpen(false);
+  const openEditDemultiplexer = () => setOpen(true);
+  const closeEditDemultiplexer = () => setOpen(false);
   
   // 处理表单提交
   const handleSubmit = (values: {
@@ -49,59 +48,60 @@ const Multiplexer = () => {
     dataBits: number;
     numberOfSelectorBits: number;
   }) => {
-    setMultiplexerData({...values});
+    setDemultiplexerData({...values});
     updateNodeInternals(nodeId);
     void message.success('配置成功');
-    closeEditMultiplexer();
+    closeEditDemultiplexer();
   };
   
   useEffect(() => {
     // 计算高度值
-    const heightValue = 30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) + 1);
+    const heightValue = 30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) + 1);
     
     // 获取容器元素
-    const container = document.querySelector('.multiplexer-container') as HTMLElement;
+    const container = document.querySelector('.demultiplexer-container') as HTMLElement;
     
     // 设置CSS变量
     if (container) {
-      container.style.setProperty('--multiplexer-before-height', `${heightValue}px`);
-      container.style.setProperty('--multiplexer-height', `${heightValue + 10}px`);
+      container.style.setProperty('--demultiplexer-before-height', `${heightValue}px`);
+      container.style.setProperty('--demultiplexer-height', `${heightValue + 10}px`);
     }
-  }, [multiplexerData.numberOfSelectorBits]);
+  }, [demultiplexerData.numberOfSelectorBits]);
   
   
   return (
-    <div className="multiplexer-container">
-      <h3>{multiplexerData.label}</h3>
-      <div className="multiplexer" style={{transform: `rotate(${-multiplexerData.rotation}deg)`}}>
+    <div className="demultiplexer-container">
+      <h3>{demultiplexerData.label}</h3>
+      <div className="demultiplexer" style={{transform: `rotate(${-demultiplexerData.rotation}deg)`}}>
         {/* 节点端口 */}
-        <p className={'multiplexer-port multiplexer-0'}>0</p>
+        <p className={'demultiplexer-port demultiplexer-0'}>0</p>
         
         <NodeToolbar isVisible={true} offset={0}>
-          <EditOutlined onClick={openEditMultiplexer}/>
-          <MultiplexerModal open={open} closeEditMultiplexer={closeEditMultiplexer} initialValues={multiplexerData}
-                            onSubmit={handleSubmit}/>
+          <EditOutlined onClick={openEditDemultiplexer}/>
+          <DemultiplexerModal open={open} closeEditDemultiplexer={closeEditDemultiplexer}
+                              initialValues={demultiplexerData}
+                              onSubmit={handleSubmit}/>
         </NodeToolbar>
         
-        {Array.from({length: Math.pow(2, multiplexerData.numberOfSelectorBits)}, (_, i) => {
-            const step = 70 / (Math.pow(2, multiplexerData.numberOfSelectorBits) - 1);
-            const leftPosition = 15 + step * i;
-            return <Handle key={`input${i}`} type='target' id={`input${i}`} position={Position.Left}
-                           style={{top: `${leftPosition}%`}}/>
+        {Array.from({length: Math.pow(2, demultiplexerData.numberOfSelectorBits)}, (_, i) => {
+            const step = 70 / (Math.pow(2, demultiplexerData.numberOfSelectorBits) - 1);
+            const rightPosition = 15 + step * i;
+            return <Handle key={`out${i}`} type='source' id={`input${i}`} position={Position.Right}
+                           style={{top: `${rightPosition}%`}}/>
           }
         )}
         <Handle type='target' id="sel" position={Position.Bottom} style={{bottom: '11px'}}/>
-        <Handle type='source' id="out" position={Position.Right}/>
+        <Handle type='source' id="input" position={Position.Left}/>
       </div>
     </div>
   );
 };
 
-export default Multiplexer;
+export default Demultiplexer;
 
-interface MultiplexerModalProps {
+interface DemultiplexerModalProps {
   open: boolean;
-  closeEditMultiplexer: () => void;
+  closeEditDemultiplexer: () => void;
   initialValues: {
     label: string;
     rotation: number;
@@ -111,12 +111,12 @@ interface MultiplexerModalProps {
   onSubmit: (values: { label: string; rotation: number; dataBits: number; numberOfSelectorBits: number; }) => void;
 }
 
-const MultiplexerModal: React.FC<MultiplexerModalProps> = ({
-                                                             open,
-                                                             closeEditMultiplexer: closeEditMultiplexer,
-                                                             initialValues,
-                                                             onSubmit
-                                                           }) => {
+const DemultiplexerModal: React.FC<DemultiplexerModalProps> = ({
+                                                                 open,
+                                                                 closeEditDemultiplexer: closeEditDemultiplexer,
+                                                                 initialValues,
+                                                                 onSubmit
+                                                               }) => {
   const [form] = Form.useForm();
   
   const handleOk = () => {
@@ -134,10 +134,10 @@ const MultiplexerModal: React.FC<MultiplexerModalProps> = ({
       title={`${initialValues.label} 配置`}
       okText="确定"
       cancelText="取消"
-      onCancel={closeEditMultiplexer}
+      onCancel={closeEditDemultiplexer}
       onOk={handleOk}
     >
-      <Form form={form} name="MultiplexerConfiguration" initialValues={initialValues}>
+      <Form form={form} name="DemultiplexerConfiguration" initialValues={initialValues}>
         <Form.Item
           name="label" label="Label"
         >

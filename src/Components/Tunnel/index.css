@@ -1,0 +1,41 @@
+.tunnelIn {
+    width: 40px;
+    height: 40px;
+    background-color: black;
+    clip-path: polygon(86.6% 0, 0 50%, 86.6% 100%);
+    position: absolute;
+}
+
+.tunnelIn::before {
+    content: "";
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 4px;
+    left: 5px;
+    /*right: -5px;*/
+    /*bottom: -5px;*/
+    background-color: white;
+    clip-path: polygon(86.6% 0, 0 50%, 86.6% 100%);
+}
+
+.tunnelOut {
+    width: 40px;
+    height: 40px;
+    background-color: black;
+    clip-path: polygon(100% 50%, 13.4% 0, 13.4% 100%);
+    position: absolute;
+}
+
+.tunnelOut::before {
+    content: "";
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    /*right: -5px;*/
+    /*bottom: -5px;*/
+    background-color: white;
+    clip-path: polygon(100% 50%, 13.4% 0, 13.4% 100%);
+}

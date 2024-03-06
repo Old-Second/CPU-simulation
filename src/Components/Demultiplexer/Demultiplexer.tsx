@@ -78,12 +78,12 @@ const Demultiplexer = () => {
         {Array.from({length: Math.pow(2, demultiplexerData.numberOfSelectorBits)}, (_, i) => {
             const step = 70 / (Math.pow(2, demultiplexerData.numberOfSelectorBits) - 1);
             const rightPosition = 15 + step * i;
-            return <Handle key={`out${i}`} type='source' id={`input${i}`} position={Position.Right}
+            return <Handle key={`out${i}`} type='source' id={`out${i}`} position={Position.Right}
                            style={{top: `${rightPosition}%`}}/>
           }
         )}
         <Handle type='target' id="sel" position={Position.Bottom} style={{bottom: '11px'}}/>
-        <Handle type='source' id="input" position={Position.Left}/>
+        <Handle type='target' id="input" position={Position.Left}/>
       </div>
     </div>
   );

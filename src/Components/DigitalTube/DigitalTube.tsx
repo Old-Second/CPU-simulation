@@ -1,5 +1,5 @@
 import './index.css'
-import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
+import {Handle, Position, useNodeId} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
 import getData from "../../utils/getData.ts"
 import {useEffect, useState} from "react";
@@ -43,11 +43,6 @@ const DigitalTube = () => {
     <div className="seven-segment-display">
       {getSegment(value).map((value, index) => ((value) ?
         <div key={index} className={`segment-${index} segment`}></div> : ''))}
-      <NodeToolbar>
-        <button>delete</button>
-        <button>copy</button>
-        <button>expand</button>
-      </NodeToolbar>
       <Handle type='target' id="111" position={Position.Left}/>
     </div>
   );

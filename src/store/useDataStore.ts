@@ -109,6 +109,20 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
       };
       // 设置新的数据状态
       set({data: newDataState});
+    } else if (sourceId === 'TunnelIn') {
+      const newEdgeDataKey = `reactflow__edge-${sourceId}`;
+      // 更新数据
+      const newDataState = {
+        ...currentState.data,
+        [newEdgeDataKey]: {
+          sourceId: 'TunnelIn',
+          sourcePort: sourcePort ?? '',
+          targetId: 'TunnelOut',
+          targetPort: sourcePort ?? '',
+          data: newData,
+        },
+      };
+      set({data: newDataState});
     }
   },
 }), shallow);

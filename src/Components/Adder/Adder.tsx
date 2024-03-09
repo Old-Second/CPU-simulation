@@ -1,14 +1,13 @@
 import './index.css';
 import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
-import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
 import {Form, InputNumber, Input, message, Modal} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Adder = () => {
-  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [adderInput, setAdderInput] = useState({a: 0, b: 0, c_i: 0});
   const [adderData, setAdderData] = useState({
@@ -23,11 +22,11 @@ const Adder = () => {
   // 当数据或节点 ID 更改时更新 a, b, 和 c_i
   useEffect(() => {
       setAdderInput({
-        a: getData(nodeId, 'a', data),
-        b: getData(nodeId, 'b', data),
-        c_i: getData(nodeId, 'c_i', data)
+        a: getData(nodeId, 'a'),
+        b: getData(nodeId, 'b'),
+        c_i: getData(nodeId, 'c_i')
       })
-    }, [data, nodeId]
+    }, [data, getData, nodeId]
   );
   
   // 当 a, b 或 c_i 更改时更新输出

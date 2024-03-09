@@ -1,7 +1,6 @@
 import './index.css'
 import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
-import getData from "../../utils/getData.ts"
 import React, {useEffect, useRef, useState} from "react";
 import {Form, Input, InputNumber, message, Modal} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
@@ -9,7 +8,7 @@ import {selector} from "../../utils/selector.ts";
 
 
 const Reg = () => {
-  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [regInput, setRegInput] = useState({D: 0, C: 0, en: 0});
   const [regData, setRegData] = useState<{ dataBits: number; label: string }>({
@@ -26,16 +25,16 @@ const Reg = () => {
   
   // 当数据或节点 ID 更改时更新数据
   useEffect(() => {
-    const D = getData(nodeId, 'D', data);
-    const C = getData(nodeId, 'C', data);
-    const en = getData(nodeId, 'en', data);
+    const D = getData(nodeId, 'D');
+    const C = getData(nodeId, 'C');
+    const en = getData(nodeId, 'en');
     setRegInput({D, C, en});
     // 如果满足条件，则更新 Q
     if (prevRegInput.current.en === 1 && en === 1 && prevRegInput.current.C === 0 && C === 1) {
       setQ(D);
     }
     prevRegInput.current = regInput;
-  }, [data, nodeId]);
+  }, [data, getData, nodeId, regInput]);
   
   // 当数据源更改时更新 Q
   useEffect(() => {

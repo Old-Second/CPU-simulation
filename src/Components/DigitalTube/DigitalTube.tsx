@@ -1,18 +1,18 @@
 import './index.css'
 import {Handle, Position, useNodeId} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
-import getData from "../../utils/getData.ts"
 import {useEffect, useState} from "react";
+import {selector} from "../../utils/selector.ts";
 
 
 const DigitalTube = () => {
-  const data = useDataStore((state) => state.data);
+  const {data, getData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [value, setValue] = useState(0);
   
   useEffect(() => {
-    setValue(getData(nodeId, '111', data))
-  }, [data, nodeId]);
+    setValue(getData(nodeId, '111'))
+  }, [data, getData, nodeId]);
   
   // 定义每个数字的数码管段
   const segments = [

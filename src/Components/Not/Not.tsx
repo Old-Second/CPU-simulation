@@ -1,14 +1,13 @@
 import './index.css';
 import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
-import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
 import {Form, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Not = () => {
-  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [notInput, setNotInput] = useState(0);
@@ -26,8 +25,8 @@ const Not = () => {
   
   // 当数据或节点 ID 更改时更新
   useEffect(() => {
-      setNotInput(getData(nodeId, 'in', data))
-    }, [data, nodeId]
+      setNotInput(getData(nodeId, 'in'))
+    }, [data, getData, nodeId]
   );
   
   // 更新输出

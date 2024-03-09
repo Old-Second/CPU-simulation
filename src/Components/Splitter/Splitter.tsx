@@ -1,14 +1,13 @@
 import './index.css';
 import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
-import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
 import {Form, Input, message, Modal} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Splitter = () => {
-  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [splitterInput, setSplitterInput] = useState('');
@@ -52,9 +51,9 @@ const Splitter = () => {
   useEffect(() => {
     // 获取输入端口数据
     setSplitterInput(Array.from({length: splitterData.InputSplitting.split(',').length}, (_, index) =>
-      getData(nodeId, `input-${inPort[index]}`, data)
+      getData(nodeId, `input-${inPort[index]}`)
     ).join(''))
-  }, [data, splitterData.InputSplitting, nodeId, inPort]);
+  }, [data, splitterData.InputSplitting, nodeId, inPort, getData]);
   
   useEffect(() => {
     // 解析输出分割信息

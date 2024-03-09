@@ -29,6 +29,7 @@ export interface RFState {
   setEdges: (edges: Edge[]) => void;
   setData: (data: DataState) => void;
   updateData: (sourceId: string, sourcePort: string, newData: number) => void;
+  getData: (targetId: string, targetPort: string) => number;
   setChipData: (newData: ChipDataState) => void;
   updateChipData: (chipId: string, chipData: ChipDataState) => void;
   getChipData: (chipId: string) => unknown;
@@ -133,6 +134,18 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
       };
       set({data: newDataState});
     }
+  },
+  getData: (targetId: string, targetPort: string) => {
+    const currentState = get();
+    const currentData = currentState.data;
+    // 找到满足条件的元素
+    const foundItemKey = Object.keys(currentData).find(key => {
+      const {targetId: itemTargetId, targetPort: itemTargetPort} = currentData[key];
+      return itemTargetId === targetId && itemTargetPort === targetPort;
+    });
+    
+    // 返回满足条件的元素的数据，如果没有找到则返回默认值 0
+    return foundItemKey ? currentData[foundItemKey].data : 0;
   },
   setChipData: (chipData: ChipDataState) => {
     set({chipData});

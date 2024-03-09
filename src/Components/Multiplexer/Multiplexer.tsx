@@ -1,14 +1,13 @@
 import './index.css';
 import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
-import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
 import {Form, InputNumber, Input, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Multiplexer = () => {
-  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [multiplexerInput, setMultiplexerInput] = useState<{ input: number[]; sel: number; }>({
@@ -37,11 +36,11 @@ const Multiplexer = () => {
   useEffect(() => {
       setMultiplexerInput({
         input: Array.from({length: Math.pow(2, multiplexerData.numberOfSelectorBits)}, (_, index) =>
-          getData(nodeId, `input${index}`, data)
+          getData(nodeId, `input${index}`)
         ),
-        sel: getData(nodeId, 'sel', data)
+        sel: getData(nodeId, 'sel')
       })
-    }, [data, multiplexerData.numberOfSelectorBits, nodeId]
+    }, [data, getData, multiplexerData.numberOfSelectorBits, nodeId]
   );
   
   useEffect(() => {

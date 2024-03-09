@@ -1,7 +1,6 @@
 import './index.css'
 import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
-import getData from "../../utils/getData.ts"
 import React, {useEffect, useState} from "react";
 import {Form, Input, InputNumber, message, Modal, Table} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
@@ -11,7 +10,7 @@ const {Column} = Table;
 
 
 const Rom = () => {
-  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [romInput, setRomInput] = useState({A: 0, sel: 0});
   const [romData, setRomData] = useState<{
@@ -33,10 +32,10 @@ const Rom = () => {
   // 当数据或节点 ID 更改时更新 A 和 sel
   useEffect(() => {
     setRomInput({
-      A: getData(nodeId, 'A', data),
-      sel: getData(nodeId, 'sel', data)
+      A: getData(nodeId, 'A'),
+      sel: getData(nodeId, 'sel')
     })
-  }, [data, nodeId]);
+  }, [data, getData, nodeId]);
   
   // 当 A 或数据源更改时更新 D
   useEffect(() => {

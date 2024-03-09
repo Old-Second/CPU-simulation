@@ -1,7 +1,6 @@
 import './index.css'
 import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
-import getData from "../../utils/getData.ts"
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Form, Input, InputNumber, message, Modal, Table} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
@@ -11,7 +10,7 @@ const {Column} = Table;
 
 
 const Ram = () => {
-  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [ramInput, setRamInput] = useState({A: 0, Din: 0, str: 0, C: 0, ld: 0});
   const [ramData, setRamData] = useState<{
@@ -29,17 +28,17 @@ const Ram = () => {
   
   // 当数据或节点 ID 更改时更新数据
   useEffect(() => {
-    const A = getData(nodeId, 'A', data);
-    const str = getData(nodeId, 'str', data);
-    const C = getData(nodeId, 'C', data);
-    const Din = getData(nodeId, 'Din', data);
-    setRamInput({A, Din, str, C, ld: getData(nodeId, 'ld', data)});
+    const A = getData(nodeId, 'A');
+    const str = getData(nodeId, 'str');
+    const C = getData(nodeId, 'C');
+    const Din = getData(nodeId, 'Din');
+    setRamInput({A, Din, str, C, ld: getData(nodeId, 'ld')});
     // 如果满足条件，则更新 DOut
     if (prevRamInput.current.str === 1 && str === 1 && prevRamInput.current.C === 0 && C === 1) {
       setDOut(prevState => ({...prevState, [A]: Din}));
     }
     prevRamInput.current = ramInput;
-  }, [data, nodeId]);
+  }, [data, getData, nodeId, ramInput]);
   
   // 当数据源更改时更新 D
   useEffect(() => {

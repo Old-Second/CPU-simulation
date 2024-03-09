@@ -7,7 +7,7 @@ import {
   OnNodesChange,
   Panel,
   ReactFlowInstance,
-  ReactFlowProvider
+  useReactFlow
 } from "reactflow";
 import './index.css'
 import {useRef, useState} from 'react';
@@ -37,7 +37,7 @@ const selector = (state: {
 
 const CircuitDiagram = () => {
   const {nodes, edges, onNodesChange, onEdgesChange, onConnect} = useDataStore(selector);
-  
+  const {screenToFlowPosition} = useReactFlow();
   
   const diagramRef = useRef<HTMLDivElement>(null);
   
@@ -47,12 +47,8 @@ const CircuitDiagram = () => {
       drop: (item: { type: string }, monitor) => {
         const mouseOffset = monitor.getClientOffset();
         if (!mouseOffset) return; // 空值检查
-        const diagramOffset = diagramRef.current?.getBoundingClientRect();
-        if (!diagramOffset) return; // 空值检查
-        // 计算鼠标相对于 CircuitDiagram 组件的位置
-        const relativeX = mouseOffset.x - diagramOffset.left;
-        const relativeY = mouseOffset.y - diagramOffset.top;
-        addNode(item.type, {x: relativeX, y: relativeY})
+        const position = screenToFlowPosition(mouseOffset);
+        addNode(item.type, position)
       },
       collect: (monitor) => ({
         isOver: monitor.isOver(),
@@ -64,29 +60,27 @@ const CircuitDiagram = () => {
   
   return (
     <div style={{height: '100vh', width: '88vw'}} ref={drop}>
-      <ReactFlowProvider>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={NodeTypes}
-          // edgeTypes={edgeTypes}
-          proOptions={{hideAttribution: true}}
-          // fitView={true}
-          fitViewOptions={{duration: 500}}
-          ref={diagramRef}
-          onInit={setRfInstance}
-        >
-          <Panel position="top-left">
-            <Save rfInstance={rfInstance as ReactFlowInstance}/>
-          </Panel>
-          <Background variant={BackgroundVariant.Dots} gap={12} size={1}/>
-          <Controls/>
-          <MiniMap/>
-        </ReactFlow>
-      </ReactFlowProvider>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        nodeTypes={NodeTypes}
+        // edgeTypes={edgeTypes}
+        proOptions={{hideAttribution: true}}
+        // fitView={true}
+        fitViewOptions={{duration: 500}}
+        ref={diagramRef}
+        onInit={setRfInstance}
+      >
+        <Panel position="top-left">
+          <Save rfInstance={rfInstance as ReactFlowInstance}/>
+        </Panel>
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1}/>
+        <Controls/>
+        <MiniMap/>
+      </ReactFlow>
     </div>
   );
 };

@@ -11,8 +11,6 @@ export interface DataState {
   [edgeId: string]: DataItem;
 }
 
-// 定义上下文类型
-export interface DataContextType {
-  data: DataState;
-  updateData: (newData: DataState) => void;
+export interface ChipDataState {
+  [nodeId: string]: unknown;
 }

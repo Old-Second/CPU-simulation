@@ -10,7 +10,7 @@ const nodeTypesArray = Object.keys(NodeTypes);
 const Sidebar = () => {
   
   return (
-    <Sider collapsible theme="light">
+    <Sider collapsible theme="light" width={'12vw'}>
       {nodeTypesArray.map((item) => <DraggableItem key={item} type={item}/>)}
     </Sider>
   )

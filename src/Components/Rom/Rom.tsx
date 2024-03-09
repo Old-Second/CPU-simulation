@@ -11,7 +11,7 @@ const {Column} = Table;
 
 
 const Rom = () => {
-  const {data, updateData} = useDataStore(selector);
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [romInput, setRomInput] = useState({A: 0, sel: 0});
   const [romData, setRomData] = useState<{
@@ -20,6 +20,15 @@ const Rom = () => {
     label: string,
     dataSource: { [address: string]: number; }
   }>({addressBits: 1, dataBits: 1, label: "ROM", dataSource: {}});
+  
+  useEffect(() => {
+    setRomData((getChipData(nodeId) ?? getChipData('rom')) as {
+      dataBits: number;
+      addressBits: number;
+      label: string,
+      dataSource: { [address: string]: number; }
+    });
+  }, [getChipData, nodeId]);
   
   // 当数据或节点 ID 更改时更新 A 和 sel
   useEffect(() => {
@@ -49,6 +58,7 @@ const Rom = () => {
     dataSource: { [address: string]: number; }
   }) => {
     setRomData(data);
+    updateChipData(nodeId, data);
     void message.success('配置成功');
     closeEditRom();
   }

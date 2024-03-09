@@ -1,5 +1,5 @@
 import './index.css';
-import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
+import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
 import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
@@ -8,53 +8,62 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const TunnelIn = () => {
-    const {data, updateData} = useDataStore(selector);
-    const nodeId = useNodeId() as string;
-    const [tunnelInInput, setTunnelInInput] = useState(0);
-    const [tunnelInData, setTunnelInData] = useState({
-      netName: "TunnelIn",
-      rotation: 0,
-    });
-    
-    // 当数据或节点 ID 更改时更新
-    useEffect(() => {
-        setTunnelInInput(getData(nodeId, 'in', data))
-      }, [data, nodeId]
-    );
-    
-    // 更新输出
-    useEffect(() => {
-      updateData('TunnelIn', tunnelInData.netName, tunnelInInput);
-    }, [tunnelInInput, nodeId, updateData, tunnelInData.netName]);
-    
-    const [open, setOpen] = useState(false);
-    const openEditTunnelIn = () => setOpen(true);
-    const closeEditTunnelIn = () => setOpen(false);
-    
-    
-    // 处理表单提交
-    const handleSubmit = (values: { netName: string; rotation: number; }) => {
-      setTunnelInData({...values});
-      void message.success('配置成功');
-      closeEditTunnelIn();
-    };
-    
-    return (
-      <>
-        <h3>{tunnelInData.netName}</h3>
-        <div className="tunnelIn" style={{transform: `rotate(${-tunnelInData.rotation}deg)`}}>
-          
-          <NodeToolbar isVisible={true} offset={0}>
-            <EditOutlined onClick={openEditTunnelIn}/>
-            <TunnelInModal open={open} closeEditTunnelIn={closeEditTunnelIn} initialValues={tunnelInData}
-                           onSubmit={handleSubmit}/>
-          </NodeToolbar>
-          <Handle type='target' id="in" position={Position.Left} style={{left: '1px'}}/>
-        </div>
-      </>
-    );
-  }
-;
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const nodeId = useNodeId() as string;
+  const updateNodeInternals = useUpdateNodeInternals();
+  const [tunnelInInput, setTunnelInInput] = useState(0);
+  const [tunnelInData, setTunnelInData] = useState({
+    netName: "TunnelIn",
+    rotation: 0,
+  });
+  
+  useEffect(() => {
+    setTunnelInData((getChipData(nodeId) ?? getChipData('tunnelIn')) as { netName: string; rotation: number; });
+  }, [getChipData, nodeId]);
+  useEffect(() => {
+    updateNodeInternals(nodeId);
+  }, [nodeId, tunnelInData, updateNodeInternals]);
+  
+  // 当数据或节点 ID 更改时更新
+  useEffect(() => {
+      setTunnelInInput(getData(nodeId, 'in', data))
+    }, [data, nodeId]
+  );
+  
+  // 更新输出
+  useEffect(() => {
+    updateData('TunnelIn', tunnelInData.netName, tunnelInInput);
+  }, [tunnelInInput, nodeId, updateData, tunnelInData.netName]);
+  
+  const [open, setOpen] = useState(false);
+  const openEditTunnelIn = () => setOpen(true);
+  const closeEditTunnelIn = () => setOpen(false);
+  
+  
+  // 处理表单提交
+  const handleSubmit = (values: { netName: string; rotation: number; }) => {
+    setTunnelInData({...values});
+    updateChipData(nodeId, values);
+    updateNodeInternals(nodeId);
+    void message.success('配置成功');
+    closeEditTunnelIn();
+  };
+  
+  return (
+    <>
+      <h3>{tunnelInData.netName}</h3>
+      <div className="tunnelIn" style={{transform: `rotate(${-tunnelInData.rotation}deg)`}}>
+        
+        <NodeToolbar isVisible={true} offset={0}>
+          <EditOutlined onClick={openEditTunnelIn}/>
+          <TunnelInModal open={open} closeEditTunnelIn={closeEditTunnelIn} initialValues={tunnelInData}
+                         onSubmit={handleSubmit}/>
+        </NodeToolbar>
+        <Handle type='target' id="in" position={Position.Left} style={{left: '1px'}}/>
+      </div>
+    </>
+  );
+};
 
 export default TunnelIn;
 

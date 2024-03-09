@@ -9,16 +9,20 @@ import {selector} from "../../utils/selector.ts";
 
 
 const Reg = () => {
-  const {data, updateData} = useDataStore(selector);
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [regInput, setRegInput] = useState({D: 0, C: 0, en: 0});
-  const [regData, setRegData] = useState<{ dataBits: number; label: string, }>({
+  const [regData, setRegData] = useState<{ dataBits: number; label: string }>({
     dataBits: 1,
     label: "Reg"
   });
   const [Q, setQ] = useState<number>(0);
   
   const prevRegInput = useRef(regInput);
+  
+  useEffect(() => {
+    setRegData((getChipData(nodeId) ?? getChipData('reg')) as { dataBits: number; label: string });
+  }, [getChipData, nodeId]);
   
   // 当数据或节点 ID 更改时更新数据
   useEffect(() => {
@@ -48,6 +52,7 @@ const Reg = () => {
     label: string;
   }) => {
     setRegData(data);
+    updateChipData(nodeId, data);
     void message.success('配置成功');
     closeEditReg();
   }

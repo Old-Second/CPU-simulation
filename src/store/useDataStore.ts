@@ -12,29 +12,34 @@ import {
   applyEdgeChanges,
 } from 'reactflow';
 
-import {DataState} from "../type/Data.ts";
+import {ChipDataState, DataState} from "../type/Data.ts";
 import {createWithEqualityFn} from "zustand/traditional";
 import {shallow} from "zustand/shallow";
+import {chipData} from "../type/NodeTypes.ts";
 
 export interface RFState {
   nodes: Node[];
   edges: Edge[];
   data: DataState;
+  chipData: ChipDataState;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
+  setData: (data: DataState) => void;
   updateData: (sourceId: string, sourcePort: string, newData: number) => void;
+  setChipData: (newData: ChipDataState) => void;
+  updateChipData: (chipId: string, chipData: ChipDataState) => void;
+  getChipData: (chipId: string) => unknown;
 }
 
 
 const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
-  // eslint-disable-next-line
-  // @ts-ignore
   nodes: [],
   edges: [],
   data: {},
+  chipData: chipData,
   // 处理节点变化
   // onNodesChange: (changes: NodeChange[]) => {
   //   // 使用自定义的比较函数来比较节点内容是否发生了变化
@@ -93,6 +98,10 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
   setEdges: (edges: Edge[]) => {
     set({edges});
   },
+  // 设置数据
+  setData: (data: DataState) => {
+    set({data});
+  },
   // 更新数据
   updateData: (sourceId: string, sourcePort: string, newData: number) => {
     const currentState = get();
@@ -124,6 +133,23 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
       };
       set({data: newDataState});
     }
+  },
+  setChipData: (chipData: ChipDataState) => {
+    set({chipData});
+  },
+  updateChipData: (chipId: string, chipData: ChipDataState) => {
+    const currentState = get();
+    const currentChipData = currentState.chipData;
+    if (currentChipData[chipId] !== chipData) {
+      const newChipDataState = {
+        ...currentState.chipData,
+        [chipId]: chipData,
+      };
+      set({chipData: newChipDataState});
+    }
+  },
+  getChipData: (chipId: string) => {
+    return get().chipData[chipId];
   },
 }), shallow);
 

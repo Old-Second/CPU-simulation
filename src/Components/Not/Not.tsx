@@ -1,5 +1,5 @@
 import './index.css';
-import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
+import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
 import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
@@ -8,58 +8,67 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Not = () => {
-    const {data, updateData} = useDataStore(selector);
-    const nodeId = useNodeId() as string;
-    const [notInput, setNotInput] = useState(0);
-    const [notData, setNotData] = useState({
-      label: "Not",
-      rotation: 0,
-    });
-    
-    // 当数据或节点 ID 更改时更新
-    useEffect(() => {
-        setNotInput(getData(nodeId, 'in', data))
-      }, [data, nodeId]
-    );
-    
-    // 更新输出
-    useEffect(() => {
-      const invertedInput = Number(String(notInput).split('').map(bit => bit === '0' ? '1' : '0').join(''));
-      updateData(nodeId, 'out', invertedInput);
-    }, [notInput, nodeId, updateData]);
-    
-    const [open, setOpen] = useState(false);
-    const openEditNot = () => setOpen(true);
-    const closeEditNot = () => setOpen(false);
-    
-    
-    // 处理表单提交
-    const handleSubmit = (values: { label: string; rotation: number; }) => {
-      setNotData({...values});
-      void message.success('配置成功');
-      closeEditNot();
-    };
-    
-    return (
-      <>
-        <h3>{notData.label}</h3>
-        <div className="not" style={{transform: `rotate(${-notData.rotation}deg)`}}>
-          
-          <NodeToolbar isVisible={true} offset={0}>
-            <EditOutlined onClick={openEditNot}/>
-            <NotModal open={open} closeEditNot={closeEditNot} initialValues={notData} onSubmit={handleSubmit}/>
-          </NodeToolbar>
-          <div className='not-square'>
-            <Handle type='target' id="in" position={Position.Left}/>
-          </div>
-          <div className="not-circle">
-            <Handle type='source' id="out" position={Position.Right}/>
-          </div>
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const nodeId = useNodeId() as string;
+  const updateNodeInternals = useUpdateNodeInternals();
+  const [notInput, setNotInput] = useState(0);
+  const [notData, setNotData] = useState({
+    label: "Not",
+    rotation: 0,
+  });
+  
+  useEffect(() => {
+    setNotData((getChipData(nodeId) ?? getChipData('not')) as { label: string, rotation: number });
+  }, [getChipData, nodeId]);
+  useEffect(() => {
+    updateNodeInternals(nodeId);
+  }, [notData, nodeId, updateNodeInternals]);
+  
+  // 当数据或节点 ID 更改时更新
+  useEffect(() => {
+      setNotInput(getData(nodeId, 'in', data))
+    }, [data, nodeId]
+  );
+  
+  // 更新输出
+  useEffect(() => {
+    const invertedInput = Number(String(notInput).split('').map(bit => bit === '0' ? '1' : '0').join(''));
+    updateData(nodeId, 'out', invertedInput);
+  }, [notInput, nodeId, updateData]);
+  
+  const [open, setOpen] = useState(false);
+  const openEditNot = () => setOpen(true);
+  const closeEditNot = () => setOpen(false);
+  
+  
+  // 处理表单提交
+  const handleSubmit = (values: { label: string; rotation: number; }) => {
+    setNotData({...values});
+    updateChipData(nodeId, values);
+    updateNodeInternals(nodeId);
+    void message.success('配置成功');
+    closeEditNot();
+  };
+  
+  return (
+    <>
+      <h3>{notData.label}</h3>
+      <div className="not" style={{transform: `rotate(${-notData.rotation}deg)`}}>
+        
+        <NodeToolbar isVisible={true} offset={0}>
+          <EditOutlined onClick={openEditNot}/>
+          <NotModal open={open} closeEditNot={closeEditNot} initialValues={notData} onSubmit={handleSubmit}/>
+        </NodeToolbar>
+        <div className='not-square'>
+          <Handle type='target' id="in" position={Position.Left}/>
         </div>
-      </>
-    );
-  }
-;
+        <div className="not-circle">
+          <Handle type='source' id="out" position={Position.Right}/>
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default Not;
 

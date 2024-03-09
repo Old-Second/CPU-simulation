@@ -8,86 +8,90 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Adder = () => {
-    const {data, updateData} = useDataStore(selector);
-    const nodeId = useNodeId() as string;
-    const [adderInput, setAdderInput] = useState({a: 0, b: 0, c_i: 0});
-    const [adderData, setAdderData] = useState({
-      label: "Adder",
-      dataBits: 1
-    });
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const nodeId = useNodeId() as string;
+  const [adderInput, setAdderInput] = useState({a: 0, b: 0, c_i: 0});
+  const [adderData, setAdderData] = useState({
+    label: "Adder",
+    dataBits: 1
+  });
+  
+  useEffect(() => {
+    setAdderData((getChipData(nodeId) ?? getChipData('adder')) as { label: string, dataBits: number });
+  }, [getChipData, nodeId]);
+  
+  // 当数据或节点 ID 更改时更新 a, b, 和 c_i
+  useEffect(() => {
+      setAdderInput({
+        a: getData(nodeId, 'a', data),
+        b: getData(nodeId, 'b', data),
+        c_i: getData(nodeId, 'c_i', data)
+      })
+    }, [data, nodeId]
+  );
+  
+  // 当 a, b 或 c_i 更改时更新输出
+  useEffect(() => {
+    const {a, b, c_i} = adderInput;
+    let sum = '', co = c_i;
     
-    // 当数据或节点 ID 更改时更新 a, b, 和 c_i
-    useEffect(() => {
-        setAdderInput({
-          a: getData(nodeId, 'a', data),
-          b: getData(nodeId, 'b', data),
-          c_i: getData(nodeId, 'c_i', data)
-        })
-      }, [data, nodeId]
-    );
+    const binA = a.toString().padStart(adderData.dataBits, '0');
+    const binB = b.toString().padStart(adderData.dataBits, '0');
     
-    // 当 a, b 或 c_i 更改时更新输出
-    useEffect(() => {
-      const {a, b, c_i} = adderInput;
-      let sum = '', co = c_i;
+    for (let i = adderData.dataBits - 1; i >= 0; i--) {
+      const digitA = parseInt(binA[i], 2);
+      const digitB = parseInt(binB[i], 2);
       
-      const binA = a.toString().padStart(adderData.dataBits, '0');
-      const binB = b.toString().padStart(adderData.dataBits, '0');
+      // 计算当前位的和
+      const s = (digitA ^ digitB ^ co).toString();
       
-      for (let i = adderData.dataBits - 1; i >= 0; i--) {
-        const digitA = parseInt(binA[i], 2);
-        const digitB = parseInt(binB[i], 2);
+      // 更新结果和进位
+      sum = s + sum;
+      co = ((digitA & digitB) | (digitA & co) | (digitB & co));
+    }
+    
+    updateData(nodeId, 's', parseInt(sum));
+    updateData(nodeId, 'c_o', co);
+  }, [adderInput, adderData.dataBits, nodeId, updateData]);
+  
+  const [open, setOpen] = useState(false);
+  const openEditAdder = () => setOpen(true);
+  const closeEditAdder = () => setOpen(false);
+  
+  
+  // 处理表单提交
+  const handleSubmit = (values: { label: string; dataBits: number; }) => {
+    setAdderData({...values});
+    updateChipData(nodeId, values);
+    void message.success('配置成功');
+    closeEditAdder();
+  };
+  
+  return (
+    <>
+      <h3>{adderData.label}</h3>
+      <div className="adder">
+        {/* 节点端口 */}
+        <p className={'adder-port adder-a'}>A</p>
+        <p className={'adder-port adder-b'}>B</p>
+        <p className={'adder-port adder-c_i'}>C<sub>i</sub></p>
+        <p className={'adder-port adder-s'}>S</p>
+        <p className={'adder-port adder-c_o'}>C<sub>0</sub></p>
         
-        // 计算当前位的和
-        const s = (digitA ^ digitB ^ co).toString();
+        <NodeToolbar isVisible={true} offset={0}>
+          <EditOutlined onClick={openEditAdder}/>
+          <AdderModal open={open} closeEditAdder={closeEditAdder} initialValues={adderData} onSubmit={handleSubmit}/>
+        </NodeToolbar>
         
-        // 更新结果和进位
-        sum = s + sum;
-        co = ((digitA & digitB) | (digitA & co) | (digitB & co));
-      }
-      
-      updateData(nodeId, 's', parseInt(sum));
-      updateData(nodeId, 'c_o', co);
-    }, [adderInput, adderData.dataBits, nodeId, updateData]);
-    
-    const [open, setOpen] = useState(false);
-    const openEditAdder = () => setOpen(true);
-    const closeEditAdder = () => setOpen(false);
-    
-    
-    // 处理表单提交
-    const handleSubmit = (values: { label: string; dataBits: number; }) => {
-      setAdderData({...values});
-      void message.success('配置成功');
-      closeEditAdder();
-    };
-    
-    return (
-      <>
-        <h3>{adderData.label}</h3>
-        <div className="adder">
-          {/* 节点端口 */}
-          <p className={'adder-port adder-a'}>A</p>
-          <p className={'adder-port adder-b'}>B</p>
-          <p className={'adder-port adder-c_i'}>C<sub>i</sub></p>
-          <p className={'adder-port adder-s'}>S</p>
-          <p className={'adder-port adder-c_o'}>C<sub>0</sub></p>
-          
-          <NodeToolbar isVisible={true} offset={0}>
-            <EditOutlined onClick={openEditAdder}/>
-            <AdderModal open={open} closeEditAdder={closeEditAdder} initialValues={adderData} onSubmit={handleSubmit}/>
-          </NodeToolbar>
-          
-          <Handle type='target' id="a" position={Position.Left} style={{top: '20%'}}/>
-          <Handle type='target' id="b" position={Position.Left} style={{top: '50%'}}/>
-          <Handle type='target' id="c_i" position={Position.Left} style={{top: '80%'}}/>
-          <Handle type='source' id="s" position={Position.Right} style={{top: '20%'}}/>
-          <Handle type='source' id="c_0" position={Position.Right} style={{top: '50%'}}/>
-        </div>
-      </>
-    );
-  }
-;
+        <Handle type='target' id="a" position={Position.Left} style={{top: '20%'}}/>
+        <Handle type='target' id="b" position={Position.Left} style={{top: '50%'}}/>
+        <Handle type='target' id="c_i" position={Position.Left} style={{top: '80%'}}/>
+        <Handle type='source' id="s" position={Position.Right} style={{top: '20%'}}/>
+        <Handle type='source' id="c_0" position={Position.Right} style={{top: '50%'}}/>
+      </div>
+    </>
+  );
+};
 
 export default Adder;
 

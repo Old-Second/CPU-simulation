@@ -8,7 +8,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Multiplexer = () => {
-  const {data, updateData} = useDataStore(selector);
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [multiplexerInput, setMultiplexerInput] = useState<{ input: number[]; sel: number; }>({
@@ -21,6 +21,18 @@ const Multiplexer = () => {
     dataBits: 1,
     numberOfSelectorBits: 1
   });
+  
+  useEffect(() => {
+    setMultiplexerData((getChipData(nodeId) ?? getChipData('multiplexer')) as {
+      label: string,
+      rotation: number,
+      dataBits: number,
+      numberOfSelectorBits: number
+    });
+  }, [getChipData, nodeId]);
+  useEffect(() => {
+    updateNodeInternals(nodeId);
+  }, [multiplexerData, nodeId, updateNodeInternals]);
   
   useEffect(() => {
       setMultiplexerInput({
@@ -49,7 +61,8 @@ const Multiplexer = () => {
     dataBits: number;
     numberOfSelectorBits: number;
   }) => {
-    setMultiplexerData({...values});
+    setMultiplexerData(values);
+    updateChipData(nodeId, values);
     updateNodeInternals(nodeId);
     void message.success('配置成功');
     closeEditMultiplexer();
@@ -61,10 +74,10 @@ const Multiplexer = () => {
       <h3>{multiplexerData.label}</h3>
       <div className={`multiplexer ${nodeId}`} style={{
         transform: `rotate(${-multiplexerData.rotation}deg)`,
-        height: `${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) + 1) + 10}px`,
+        height: `${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) - 1) + 30 + 10}px`,
       }}>
         <style>
-          {`.${nodeId}::before { height: ${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) + 1)}px; }`}
+          {`.${nodeId}::before { height: ${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) - 1) + 30}px; }`}
         </style>
         
         {/* 节点端口 */}
@@ -77,13 +90,12 @@ const Multiplexer = () => {
         </NodeToolbar>
         
         {Array.from({length: Math.pow(2, multiplexerData.numberOfSelectorBits)}, (_, i) => {
-            const step = 70 / (Math.pow(2, multiplexerData.numberOfSelectorBits) - 1);
-            const leftPosition = 15 + step * i;
-            return <Handle key={`input${i}`} type='target' id={`input${i}`} position={Position.Left}
-                           style={{top: `${leftPosition}%`}}/>
+            const leftPosition = 30 * i;
+            return <Handle key={`${nodeId}-input-${i}`} type='target' id={`input-${i}`} position={Position.Left}
+                           style={{top: `${leftPosition + 15 + 5}px`}}/>
           }
         )}
-        <Handle type='target' id="sel" position={Position.Bottom} style={{bottom: '11px'}}/>
+        <Handle type='target' id="sel" position={Position.Bottom} style={{bottom: '7px'}}/>
         <Handle type='source' id="out" position={Position.Right}/>
       </div>
     </div>

@@ -40,3 +40,57 @@ export const NodeTypes = {
 //     // style: { stroke: '#f6ab6c' } // 设置样式
 //   }
 // };
+
+export const chipData = {
+  adder: {
+    label: "Adder",
+    dataBits: 1
+  },
+  multiplexer: {
+    label: "Multiplexer",
+    rotation: 0,
+    dataBits: 1,
+    numberOfSelectorBits: 1
+  },
+  demultiplexer: {
+    label: "Demultiplexer",
+    rotation: 0,
+    dataBits: 1,
+    numberOfSelectorBits: 1
+  },
+  not: {
+    label: "Not",
+    rotation: 0,
+  },
+  handInput: {
+    label: "HandInput",
+  },
+  splitter: {
+    label: "Splitter",
+    InputSplitting: '4,4',
+    OutputSplitting: '8',
+  },
+  tunnelIn: {
+    netName: "TunnelIn",
+    rotation: 0,
+  },
+  tunnelOut: {
+    netName: "TunnelOut",
+    rotation: 0,
+  },
+  reg: {
+    dataBits: 1,
+    label: "Reg"
+  },
+  ram: {
+    addressBits: 1,
+    dataBits: 1,
+    label: "RAM"
+  },
+  rom: {
+    addressBits: 1,
+    dataBits: 1,
+    label: "ROM",
+    dataSource: {}
+  }
+}

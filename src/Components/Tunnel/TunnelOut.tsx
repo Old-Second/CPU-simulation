@@ -1,5 +1,5 @@
 import './index.css';
-import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
+import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
 import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
@@ -8,53 +8,62 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const TunnelOut = () => {
-    const {data, updateData} = useDataStore(selector);
-    const nodeId = useNodeId() as string;
-    const [tunnelOutInput, setTunnelOutInput] = useState(0);
-    const [tunnelOutData, setTunnelOutData] = useState({
-      netName: "TunnelOut",
-      rotation: 0,
-    });
-    
-    // 当数据或节点 ID 更改时更新
-    useEffect(() => {
-        setTunnelOutInput(getData('TunnelOut', tunnelOutData.netName, data))
-      }, [data, nodeId, tunnelOutData.netName]
-    );
-    
-    // 更新输出
-    useEffect(() => {
-      updateData(nodeId, 'out', tunnelOutInput);
-    }, [tunnelOutInput, nodeId, updateData]);
-    
-    const [open, setOpen] = useState(false);
-    const openEditTunnelOut = () => setOpen(true);
-    const closeEditTunnelOut = () => setOpen(false);
-    
-    
-    // 处理表单提交
-    const handleSubmit = (values: { netName: string; rotation: number; }) => {
-      setTunnelOutData({...values});
-      void message.success('配置成功');
-      closeEditTunnelOut();
-    };
-    
-    return (
-      <>
-        <h3>{tunnelOutData.netName}</h3>
-        <div className="tunnelOut" style={{transform: `rotate(${-tunnelOutData.rotation}deg)`}}>
-          
-          <NodeToolbar isVisible={true} offset={0}>
-            <EditOutlined onClick={openEditTunnelOut}/>
-            <TunnelOutModal open={open} closeEditTunnelOut={closeEditTunnelOut} initialValues={tunnelOutData}
-                            onSubmit={handleSubmit}/>
-          </NodeToolbar>
-          <Handle type='source' id="out" position={Position.Right} style={{right: '1px'}}/>
-        </div>
-      </>
-    );
-  }
-;
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
+  const nodeId = useNodeId() as string;
+  const updateNodeInternals = useUpdateNodeInternals();
+  const [tunnelOutInput, setTunnelOutInput] = useState(0);
+  const [tunnelOutData, setTunnelOutData] = useState({
+    netName: "TunnelOut",
+    rotation: 0,
+  });
+  
+  useEffect(() => {
+    setTunnelOutData((getChipData(nodeId) ?? getChipData('tunnelOut')) as { netName: string; rotation: number; });
+  }, [getChipData, nodeId]);
+  useEffect(() => {
+    updateNodeInternals(nodeId);
+  }, [nodeId, tunnelOutData, updateNodeInternals]);
+  
+  // 当数据或节点 ID 更改时更新
+  useEffect(() => {
+      setTunnelOutInput(getData('TunnelOut', tunnelOutData.netName, data))
+    }, [data, nodeId, tunnelOutData.netName]
+  );
+  
+  // 更新输出
+  useEffect(() => {
+    updateData(nodeId, 'out', tunnelOutInput);
+  }, [tunnelOutInput, nodeId, updateData]);
+  
+  const [open, setOpen] = useState(false);
+  const openEditTunnelOut = () => setOpen(true);
+  const closeEditTunnelOut = () => setOpen(false);
+  
+  
+  // 处理表单提交
+  const handleSubmit = (values: { netName: string; rotation: number; }) => {
+    setTunnelOutData({...values});
+    updateChipData(nodeId, values);
+    updateNodeInternals(nodeId);
+    void message.success('配置成功');
+    closeEditTunnelOut();
+  };
+  
+  return (
+    <>
+      <h3>{tunnelOutData.netName}</h3>
+      <div className="tunnelOut" style={{transform: `rotate(${-tunnelOutData.rotation}deg)`}}>
+        
+        <NodeToolbar isVisible={true} offset={0}>
+          <EditOutlined onClick={openEditTunnelOut}/>
+          <TunnelOutModal open={open} closeEditTunnelOut={closeEditTunnelOut} initialValues={tunnelOutData}
+                          onSubmit={handleSubmit}/>
+        </NodeToolbar>
+        <Handle type='source' id="out" position={Position.Right} style={{right: '1px'}}/>
+      </div>
+    </>
+  );
+};
 
 export default TunnelOut;
 

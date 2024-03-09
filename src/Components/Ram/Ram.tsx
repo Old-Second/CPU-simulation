@@ -11,7 +11,7 @@ const {Column} = Table;
 
 
 const Ram = () => {
-  const {data, updateData} = useDataStore(selector);
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [ramInput, setRamInput] = useState({A: 0, Din: 0, str: 0, C: 0, ld: 0});
   const [ramData, setRamData] = useState<{
@@ -22,6 +22,10 @@ const Ram = () => {
   const [DOut, setDOut] = useState<{ [address: string]: number; }>({0: 0});
   
   const prevRamInput = useRef(ramInput);
+  
+  useEffect(() => {
+    setRamData((getChipData(nodeId) ?? getChipData('ram')) as { label: string, addressBits: number, dataBits: number });
+  }, [getChipData, nodeId]);
   
   // 当数据或节点 ID 更改时更新数据
   useEffect(() => {
@@ -56,6 +60,7 @@ const Ram = () => {
     label: string;
   }) => {
     setRamData(data);
+    updateChipData(nodeId, data);
     void message.success('配置成功');
     closeEditRam();
   }

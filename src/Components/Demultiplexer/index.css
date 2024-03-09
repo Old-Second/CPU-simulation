@@ -1,22 +1,22 @@
 .demultiplexer {
-    width: 90px;
+    width: 60px;
     height: 100px;
     background-color: black;
-    clip-path: polygon(100% 0, 0 25px, 0 calc(100% - 25px), 100% 100%);
+    clip-path: polygon(100% 0, 0 15px, 0 calc(100% - 15px), 100% 100%);
     position: absolute;
 }
 
 .demultiplexer::before {
     content: "";
-    width: 80px;
-    height: 90px;
+    width: 50px;
+    min-height: 60px;
     position: absolute;
     top: 5px;
     left: 5px;
     /*right: -5px;*/
     /*bottom: -5px;*/
     background-color: white;
-    clip-path: polygon(100% 0, 0 22px, 0 calc(100% - 22px), 100% 100%);
+    clip-path: polygon(100% 0, 0 12px, 0 calc(100% - 12px), 100% 100%);
 }
 
 .demultiplexer-port {

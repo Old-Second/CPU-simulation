@@ -1,5 +1,5 @@
 import './index.css';
-import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
+import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
 import getData from "../../utils/getData.ts";
 import React, {useEffect, useState} from "react";
@@ -8,8 +8,9 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Splitter = () => {
-  const {data, updateData} = useDataStore(selector);
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
+  const updateNodeInternals = useUpdateNodeInternals();
   const [splitterInput, setSplitterInput] = useState('');
   
   const [splitterData, setSplitterData] = useState({
@@ -19,8 +20,16 @@ const Splitter = () => {
   });
   
   // 输入和输出端口范围的状态
-  const [inPort, setInPort] = useState<string[]>(['0-3', '5-8'])
+  const [inPort, setInPort] = useState<string[]>(['0-3', '4-7'])
   const [outPort, setOutPort] = useState<string[]>(['0-7'])
+  
+  useEffect(() => {
+    setSplitterData((getChipData(nodeId) ?? getChipData('splitter')) as {
+      label: string;
+      InputSplitting: string;
+      OutputSplitting: string;
+    });
+  }, [getChipData, nodeId]);
   
   useEffect(() => {
     // 解析分割数据
@@ -72,11 +81,14 @@ const Splitter = () => {
     OutputSplitting: string;
   }) => {
     // 更新分离器数据
-    setSplitterData((prevData) => ({
-      ...prevData,
-      ...(values.InputSplitting && {InputSplitting: values.InputSplitting}),
-      ...(values.OutputSplitting && {OutputSplitting: values.OutputSplitting}),
-    }));
+    setSplitterData(values);
+    // setSplitterData((prevData) => ({
+    //   ...prevData,
+    //   ...(values.InputSplitting && {InputSplitting: values.InputSplitting}),
+    //   ...(values.OutputSplitting && {OutputSplitting: values.OutputSplitting}),
+    // }));
+    updateChipData(nodeId, values);
+    updateNodeInternals(nodeId);
     void message.success('配置成功');
     closeEditSplitter();
   };
@@ -87,21 +99,19 @@ const Splitter = () => {
       {/*<h3>{splitterData.label}</h3>*/}
       {/* 输入端口标记 */}
       {Array.from({length: splitterData.InputSplitting.split(',').length}, (_, i) => {
-        const step = 80 / (Math.max(splitterData.InputSplitting.split(',').length, splitterData.OutputSplitting.split(',').length) - 1);
-        const leftPosition = 10 + step * i;
-        return <p key={`input-${inPort[i]}-port`} className={'splitter-port-in'}
-                  style={{top: `calc(${leftPosition}% - 10px)`}}>{inPort[i]}</p>
+        const leftPosition = 15 * i;
+        return <p key={`${nodeId}-input-${i}-port`} className={'splitter-port-in'}
+                  style={{top: `${leftPosition - 10 + 5}px`}}>{inPort[i]}</p>
       })}
       {/* 输出端口标记 */}
       {Array.from({length: splitterData.OutputSplitting.split(',').length}, (_, i) => {
-        const step = 80 / (Math.max(splitterData.InputSplitting.split(',').length, splitterData.OutputSplitting.split(',').length) - 1);
-        const rightPosition = 10 + step * i;
-        return <p key={`output-${outPort[i]}-port`} className={'splitter-port-out'}
-                  style={{top: `calc(${rightPosition}% - 10px)`}}>{outPort[i]}</p>
+        const rightPosition = 15 * i;
+        return <p key={`${nodeId}-output-${i}-port`} className={'splitter-port-out'}
+                  style={{top: `${rightPosition - 10 + 5}px`}}>{outPort[i]}</p>
       })}
       
       <div className="splitter" style={{
-        height: `${15 * (Math.max(splitterData.InputSplitting.split(',').length, splitterData.OutputSplitting.split(',').length)) + 10}px`,
+        height: `${15 * (Math.max(splitterData.InputSplitting.split(',').length, splitterData.OutputSplitting.split(',').length) - 1) + 10}px`,
       }}>
         
         <NodeToolbar isVisible={true} offset={0}>
@@ -112,17 +122,15 @@ const Splitter = () => {
         
         {/* 输入端口 */}
         {Array.from({length: splitterData.InputSplitting.split(',').length}, (_, i) => {
-          const step = 80 / (Math.max(splitterData.InputSplitting.split(',').length, splitterData.OutputSplitting.split(',').length) - 1);
-          const leftPosition = 10 + step * i;
-          return <Handle key={`input-${inPort[i]}`} type='target' id={`input-${inPort[i]}`} position={Position.Left}
-                         style={{top: `${leftPosition}%`}}/>
+          const leftPosition = 15 * i;
+          return <Handle key={`${nodeId}-input-${i}`} type='target' id={`input-${i}`}
+                         position={Position.Left} style={{top: `${leftPosition + 5}px`}}/>
         })}
         {/* 输出端口 */}
         {Array.from({length: splitterData.OutputSplitting.split(',').length}, (_, i) => {
-          const step = 80 / (Math.max(splitterData.InputSplitting.split(',').length, splitterData.OutputSplitting.split(',').length) - 1);
-          const rightPosition = 10 + step * i;
-          return <Handle key={`output-${outPort[i]}`} type='source' id={`output-${outPort[i]}`}
-                         position={Position.Right} style={{top: `${rightPosition}%`}}/>
+          const rightPosition = 15 * i;
+          return <Handle key={`${nodeId}-output-${i}`} type='source' id={`output-${i}`}
+                         position={Position.Right} style={{top: `${rightPosition + 5}px`}}/>
         })}
       </div>
     </div>

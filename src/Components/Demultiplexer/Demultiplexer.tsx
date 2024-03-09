@@ -8,7 +8,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Demultiplexer = () => {
-  const {data, updateData} = useDataStore(selector);
+  const {data, updateData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [demultiplexerInput, setDemultiplexerInput] = useState<{ input: number; sel: number; }>({
@@ -21,6 +21,18 @@ const Demultiplexer = () => {
     dataBits: 1,
     numberOfSelectorBits: 1
   });
+  
+  useEffect(() => {
+    setDemultiplexerData((getChipData(nodeId) ?? getChipData('demultiplexer')) as {
+      label: string,
+      rotation: number,
+      dataBits: number,
+      numberOfSelectorBits: number
+    });
+  }, [getChipData, nodeId]);
+  useEffect(() => {
+    updateNodeInternals(nodeId);
+  }, [demultiplexerData, nodeId, updateNodeInternals]);
   
   useEffect(() => {
       setDemultiplexerInput({
@@ -48,7 +60,8 @@ const Demultiplexer = () => {
     dataBits: number;
     numberOfSelectorBits: number;
   }) => {
-    setDemultiplexerData({...values});
+    setDemultiplexerData(values);
+    updateChipData(nodeId, values);
     updateNodeInternals(nodeId);
     void message.success('配置成功');
     closeEditDemultiplexer();
@@ -59,10 +72,10 @@ const Demultiplexer = () => {
       <h3>{demultiplexerData.label}</h3>
       <div className={`demultiplexer ${nodeId}`} style={{
         transform: `rotate(${-demultiplexerData.rotation}deg)`,
-        height: `${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) + 1) + 10}px`,
+        height: `${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) - 1) + 30 + 10}px`,
       }}>
         <style>
-          {`.${nodeId}::before { height: ${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) + 1)}px; }`}
+          {`.${nodeId}::before { height: ${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) - 1) + 30}px; }`}
         </style>
         
         {/* 节点端口 */}
@@ -76,13 +89,12 @@ const Demultiplexer = () => {
         </NodeToolbar>
         
         {Array.from({length: Math.pow(2, demultiplexerData.numberOfSelectorBits)}, (_, i) => {
-            const step = 70 / (Math.pow(2, demultiplexerData.numberOfSelectorBits) - 1);
-            const rightPosition = 15 + step * i;
-            return <Handle key={`out${i}`} type='source' id={`out${i}`} position={Position.Right}
-                           style={{top: `${rightPosition}%`}}/>
+            const rightPosition = 30 * i;
+            return <Handle key={`${nodeId}-out-${i}`} type='source' id={`out-${i}`} position={Position.Right}
+                           style={{top: `${rightPosition + 15 + 5}px`}}/>
           }
         )}
-        <Handle type='target' id="sel" position={Position.Bottom} style={{bottom: '11px'}}/>
+        <Handle type='target' id="sel" position={Position.Bottom} style={{bottom: '7px'}}/>
         <Handle type='target' id="input" position={Position.Left}/>
       </div>
     </div>

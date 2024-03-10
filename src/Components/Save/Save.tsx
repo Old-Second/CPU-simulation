@@ -112,11 +112,11 @@ const Save = ({rfInstance}: { rfInstance: ReactFlowInstance }) => {
   // 组件挂载时执行保存操作
   useEffect(() => {
     onSave();
-  }, [onSave]);
+  }, []);
   // 组件挂载时执行恢复操作
   useEffect(() => {
     onRestore().then();
-  }, [onRestore]);
+  }, []);
   
   const [open, setOpen] = useState(false);
   const openModal = () => setOpen(true);

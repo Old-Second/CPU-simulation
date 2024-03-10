@@ -7,14 +7,12 @@ import {
   OnNodesChange,
   Panel,
   ReactFlowInstance,
-  useReactFlow
 } from "reactflow";
 import './index.css'
-import {useRef, useState} from 'react';
+import {useCallback, useRef, useState} from 'react';
 import {Background, Controls, MiniMap, ReactFlow} from 'reactflow';
 import 'reactflow/dist/style.css';
 import useDataStore from "../../store/useDataStore.ts";
-import {useDrop} from "react-dnd";
 import {NodeTypes} from "../../type/NodeTypes.ts";
 import addNode from "../../utils/addNode.ts";
 import Save from "../Save/Save.tsx";
@@ -29,37 +27,55 @@ const selector = (state: {
 }) => ({
   nodes: state.nodes,
   edges: state.edges,
-  // data: state.data,
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
 });
 
 const CircuitDiagram = () => {
+  const reactFlowWrapper = useRef(null);
   const {nodes, edges, onNodesChange, onEdgesChange, onConnect} = useDataStore(selector);
-  const {screenToFlowPosition} = useReactFlow();
   
   const diagramRef = useRef<HTMLDivElement>(null);
   
-  const [, drop] = useDrop(
-    () => ({
-      accept: 'chip',
-      drop: (item: { type: string }, monitor) => {
-        const mouseOffset = monitor.getClientOffset();
-        if (!mouseOffset) return; // 空值检查
-        const position = screenToFlowPosition(mouseOffset);
-        addNode(item.type, position)
-      },
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-      }),
-    }),
-  );
-  
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   
+  const onDragOver = useCallback((event: {
+    preventDefault: () => void;
+    dataTransfer: { dropEffect: string; };
+  }) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+  
+  const onDrop = useCallback(
+    (event: {
+      preventDefault: () => void;
+      dataTransfer: { getData: (arg0: string) => string; };
+      clientX: number;
+      clientY: number;
+    }) => {
+      event.preventDefault();
+      
+      const type = event.dataTransfer.getData('application/reactflow');
+      
+      // check if the dropped element is valid
+      if (typeof type === 'undefined' || !type) {
+        return;
+      }
+      
+      const position = rfInstance!.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      addNode(type, position);
+    },
+    [rfInstance],
+  );
+  
+  
   return (
-    <div style={{height: '100vh', width: '88vw'}} ref={drop}>
+    <div style={{height: '100vh', width: '88vw'}} ref={reactFlowWrapper}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -69,10 +85,12 @@ const CircuitDiagram = () => {
         nodeTypes={NodeTypes}
         // edgeTypes={edgeTypes}
         proOptions={{hideAttribution: true}}
-        // fitView={true}
+        fitView={true}
         fitViewOptions={{duration: 500}}
         ref={diagramRef}
         onInit={setRfInstance}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
       >
         <Panel position="top-left">
           <Save rfInstance={rfInstance as ReactFlowInstance}/>

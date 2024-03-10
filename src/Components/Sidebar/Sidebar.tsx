@@ -1,5 +1,4 @@
 import {Layout} from "antd";
-import {useDrag} from "react-dnd";
 import {NodeTypes} from "../../type/NodeTypes.ts";
 import React from "react";
 
@@ -20,13 +19,10 @@ export default Sidebar;
 
 const DraggableItem = React.memo(({type}: { type: string }) => {
   
-  const [, drag] = useDrag(() => ({
-    type: 'chip',
-    item: {type},
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
+  const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
+    event.dataTransfer.setData('application/reactflow', nodeType);
+    event.dataTransfer.effectAllowed = 'move';
+  };
   
-  return (<div ref={drag}>{type}</div>)
+  return (<div onDragStart={(event) => onDragStart(event, `${type}`)} draggable>{type}</div>)
 })

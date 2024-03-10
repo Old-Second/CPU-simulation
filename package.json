@@ -15,9 +15,6 @@
     "file-saver": "^2.0.5",
     "nanoid": "^5.0.6",
     "react": "^18.2.0",
-    "react-beautiful-dnd": "^13.1.1",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "reactflow": "^11.10.3",
     "zustand": "^4.5.1"

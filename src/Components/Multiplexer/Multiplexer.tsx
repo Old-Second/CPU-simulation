@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Multiplexer = () => {
-  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [multiplexerInput, setMultiplexerInput] = useState<{ input: number[]; sel: number; }>({
@@ -28,7 +28,7 @@ const Multiplexer = () => {
       dataBits: number,
       numberOfSelectorBits: number
     });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   useEffect(() => {
     updateNodeInternals(nodeId);
   }, [multiplexerData, nodeId, updateNodeInternals]);
@@ -82,7 +82,7 @@ const Multiplexer = () => {
         {/* 节点端口 */}
         <p className={'multiplexer-port multiplexer-0'}>0</p>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditMultiplexer}/>
           <MultiplexerModal open={open} closeEditMultiplexer={closeEditMultiplexer} initialValues={multiplexerData}
                             onSubmit={handleSubmit}/>

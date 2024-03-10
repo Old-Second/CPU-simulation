@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Not = () => {
-  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [notInput, setNotInput] = useState(0);
@@ -18,7 +18,7 @@ const Not = () => {
   
   useEffect(() => {
     setNotData((getChipData(nodeId) ?? getChipData('not')) as { label: string, rotation: number });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   useEffect(() => {
     updateNodeInternals(nodeId);
   }, [notData, nodeId, updateNodeInternals]);
@@ -54,7 +54,7 @@ const Not = () => {
       <h3>{notData.label}</h3>
       <div className="not" style={{transform: `rotate(${-notData.rotation}deg)`}}>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditNot}/>
           <NotModal open={open} closeEditNot={closeEditNot} initialValues={notData} onSubmit={handleSubmit}/>
         </NodeToolbar>

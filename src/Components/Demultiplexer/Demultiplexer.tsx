@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Demultiplexer = () => {
-  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [demultiplexerInput, setDemultiplexerInput] = useState<{ input: number; sel: number; }>({
@@ -28,7 +28,7 @@ const Demultiplexer = () => {
       dataBits: number,
       numberOfSelectorBits: number
     });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   useEffect(() => {
     updateNodeInternals(nodeId);
   }, [demultiplexerData, nodeId, updateNodeInternals]);
@@ -80,7 +80,7 @@ const Demultiplexer = () => {
         {/* 节点端口 */}
         <p className={'demultiplexer-port demultiplexer-0'}>0</p>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditDemultiplexer}/>
           <DemultiplexerModal open={open} closeEditDemultiplexer={closeEditDemultiplexer}
                               initialValues={demultiplexerData}

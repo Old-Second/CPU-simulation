@@ -10,7 +10,7 @@ const {Column} = Table;
 
 
 const Ram = () => {
-  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [ramInput, setRamInput] = useState({A: 0, Din: 0, str: 0, C: 0, ld: 0});
   const [ramData, setRamData] = useState<{
@@ -24,7 +24,7 @@ const Ram = () => {
   
   useEffect(() => {
     setRamData((getChipData(nodeId) ?? getChipData('ram')) as { label: string, addressBits: number, dataBits: number });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   
   // 当数据或节点 ID 更改时更新数据
   useEffect(() => {
@@ -76,7 +76,7 @@ const Ram = () => {
         <p className={'ram-port ram-ld'}>ld</p>
         <p className={'ram-port ram-D'}>D</p>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditRam}/>
           <RamModal open={open} closeEditRam={closeEditRam} DOut={DOut}
                     onSubmit={handleSubmit} initialValues={ramData}/>

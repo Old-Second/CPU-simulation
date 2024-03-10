@@ -8,7 +8,7 @@ import {selector} from "../../utils/selector.ts";
 
 
 const Reg = () => {
-  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [regInput, setRegInput] = useState({D: 0, C: 0, en: 0});
   const [regData, setRegData] = useState<{ dataBits: number; label: string }>({
@@ -21,7 +21,7 @@ const Reg = () => {
   
   useEffect(() => {
     setRegData((getChipData(nodeId) ?? getChipData('reg')) as { dataBits: number; label: string });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   
   // 当数据或节点 ID 更改时更新数据
   useEffect(() => {
@@ -66,7 +66,7 @@ const Reg = () => {
         <p className={'reg-port reg-en'}>en</p>
         <p className={'reg-port reg-Q'}>Q</p>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditReg}/>
           <RegModal open={open} closeEditReg={closeEditReg} onSubmit={handleSubmit} initialValues={regData}/>
         </NodeToolbar>

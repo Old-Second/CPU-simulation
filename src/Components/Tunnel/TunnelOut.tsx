@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const TunnelOut = () => {
-  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [tunnelOutInput, setTunnelOutInput] = useState(0);
@@ -18,7 +18,7 @@ const TunnelOut = () => {
   
   useEffect(() => {
     setTunnelOutData((getChipData(nodeId) ?? getChipData('tunnelOut')) as { netName: string; rotation: number; });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   useEffect(() => {
     updateNodeInternals(nodeId);
   }, [nodeId, tunnelOutData, updateNodeInternals]);
@@ -53,7 +53,7 @@ const TunnelOut = () => {
       <h3>{tunnelOutData.netName}</h3>
       <div className="tunnelOut" style={{transform: `rotate(${-tunnelOutData.rotation}deg)`}}>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditTunnelOut}/>
           <TunnelOutModal open={open} closeEditTunnelOut={closeEditTunnelOut} initialValues={tunnelOutData}
                           onSubmit={handleSubmit}/>

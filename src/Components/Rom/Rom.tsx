@@ -1,7 +1,7 @@
 import './index.css'
 import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Form, Input, InputNumber, message, Modal, Table} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
@@ -10,7 +10,7 @@ const {Column} = Table;
 
 
 const Rom = () => {
-  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [romInput, setRomInput] = useState({A: 0, sel: 0});
   const [romData, setRomData] = useState<{
@@ -27,7 +27,7 @@ const Rom = () => {
       label: string,
       dataSource: { [address: string]: number; }
     });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   
   // 当数据或节点 ID 更改时更新 A 和 sel
   useEffect(() => {
@@ -71,7 +71,7 @@ const Rom = () => {
         <p className={'rom-port rom-sel'}>sel</p>
         <p className={'rom-port rom-D'}>D</p>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditRom}/>
           <RomModal open={open} closeEditRom={closeEditRom} onSubmit={handleSubmit} initialValues={romData}/>
         </NodeToolbar>
@@ -93,6 +93,7 @@ interface RomModalProps {
     label: string;
     dataBits: number;
     addressBits: number;
+    dataSource: { [address: string]: number; }
   };
   onSubmit: (data: {
     dataBits: number;
@@ -115,12 +116,26 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
       address: i > 9 ? `0x${i.toString(16).toUpperCase()}` : i.toString(),
       value: '',
     }));
+    if (initialValues.dataSource[0]) {
+      Array.from({length: rowCount}, (_, i) => {
+          const newValue = initialValues.dataSource[i].toString();
+          const maxHexValue = Math.pow(2, initialValues.dataBits) - 1;
+          if (parseInt(newValue, 16) > maxHexValue) {
+            // 如果超出最大值，设置为最大可能的值
+            newData[i].value = maxHexValue > 9 ? `0x${maxHexValue.toString(16).toUpperCase()}` : String(maxHexValue);
+          } else {
+            // 未超出最大值，直接更新为新输入的值，保留十六进制格式
+            newData[i].value = parseInt(newValue, 16) > 9 ? `0x${newValue}` : newValue;
+          }
+        }
+      );
+    }
     setDataSource(newData);
   };
   
   useEffect(() => {
     generateDataSource(initialValues.addressBits);
-  }, []);
+  }, [generateDataSource, initialValues.addressBits]);
   
   // 处理表单提交
   const handleOk = () => {
@@ -137,6 +152,20 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
         console.log('Validate Failed:', info);
       });
   };
+  
+  const inputDataSource = useCallback((newValue: string, index: number) => {
+    const newData = [...dataSource];
+    const maxHexValue = Math.pow(2, dataBits) - 1;
+    // 检查输入的值是否小于2^(Data Bits)位的十六进制数字
+    if (parseInt(newValue, 16) > maxHexValue) {
+      // 如果超出最大值，设置为最大可能的值
+      newData[index].value = maxHexValue > 9 ? `0x${maxHexValue.toString(16).toUpperCase()}` : String(maxHexValue);
+    } else {
+      // 未超出最大值，直接更新为新输入的值，保留十六进制格式
+      newData[index].value = parseInt(newValue, 16) > 9 ? `0x${newValue}` : newValue;
+    }
+    setDataSource(newData);
+  }, [dataBits, dataSource])
   
   return (
     <Modal
@@ -181,18 +210,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
             <Input
               value={text}
               onChange={(e) => {
-                const newValue = e.target.value.toUpperCase();
-                const newData = [...dataSource];
-                const maxHexValue = Math.pow(2, dataBits) - 1;
-                // 检查输入的值是否小于2^(Data Bits)位的十六进制数字
-                if (parseInt(newValue, 16) > maxHexValue) {
-                  // 如果超出最大值，设置为最大可能的值
-                  newData[index].value = maxHexValue > 9 ? `0x${maxHexValue.toString(16).toUpperCase()}` : String(maxHexValue);
-                } else {
-                  // 未超出最大值，直接更新为新输入的值，保留十六进制格式
-                  newData[index].value = parseInt(newValue, 16) > 9 ? `0x${newValue}` : newValue;
-                }
-                setDataSource(newData);
+                inputDataSource(e.target.value.toUpperCase(), index)
               }}
             />
           )}

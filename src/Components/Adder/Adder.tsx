@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Adder = () => {
-  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [adderInput, setAdderInput] = useState({a: 0, b: 0, c_i: 0});
   const [adderData, setAdderData] = useState({
@@ -17,7 +17,7 @@ const Adder = () => {
   
   useEffect(() => {
     setAdderData((getChipData(nodeId) ?? getChipData('adder')) as { label: string, dataBits: number });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   
   // 当数据或节点 ID 更改时更新 a, b, 和 c_i
   useEffect(() => {
@@ -77,7 +77,7 @@ const Adder = () => {
         <p className={'adder-port adder-s'}>S</p>
         <p className={'adder-port adder-c_o'}>C<sub>0</sub></p>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditAdder}/>
           <AdderModal open={open} closeEditAdder={closeEditAdder} initialValues={adderData} onSubmit={handleSubmit}/>
         </NodeToolbar>

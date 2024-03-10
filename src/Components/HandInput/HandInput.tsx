@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const HandInput = () => {
-  const {updateData, updateChipData, getChipData} = useDataStore(selector);
+  const {updateData, chipData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [handInputData, setHandInputData] = useState({
     label: "HandInput",
@@ -17,7 +17,7 @@ const HandInput = () => {
   
   useEffect(() => {
     setHandInputData((getChipData(nodeId) ?? getChipData('handInput')) as { label: string });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   
   // 更新输出
   const updateHandInputData = () => {
@@ -44,7 +44,7 @@ const HandInput = () => {
       <div className="handInput" onClick={updateHandInputData}>
         <div className='handInput-circle' style={{backgroundColor: out ? 'green' : 'red'}}/>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditHandInput}/>
           <HandInputModal open={open} closeEditHandInput={closeEditHandInput} initialValues={handInputData}
                           onSubmit={handleSubmit}/>

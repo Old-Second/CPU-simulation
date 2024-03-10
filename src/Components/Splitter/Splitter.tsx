@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Splitter = () => {
-  const {data, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [splitterInput, setSplitterInput] = useState('');
@@ -28,7 +28,7 @@ const Splitter = () => {
       InputSplitting: string;
       OutputSplitting: string;
     });
-  }, [getChipData, nodeId]);
+  }, [chipData, getChipData, nodeId]);
   
   useEffect(() => {
     // 解析分割数据
@@ -113,7 +113,7 @@ const Splitter = () => {
         height: `${15 * (Math.max(splitterData.InputSplitting.split(',').length, splitterData.OutputSplitting.split(',').length) - 1) + 10}px`,
       }}>
         
-        <NodeToolbar isVisible={true} offset={0}>
+        <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditSplitter}/>
           <SplitterModal open={open} closeEditSplitter={closeEditSplitter} initialValues={splitterData}
                          onSubmit={handleSubmit}/>

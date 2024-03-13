@@ -2,7 +2,7 @@ import './index.css';
 import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
 import useDataStore from "../../store/useDataStore.ts";
 import React, {useEffect, useState} from "react";
-import {Form, Input, message, Modal} from "antd";
+import {Form, Input, InputNumber, message, Modal} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
@@ -11,17 +11,17 @@ const HandInput = () => {
   const nodeId = useNodeId() as string;
   const [handInputData, setHandInputData] = useState({
     label: "HandInput",
-    // dataBits: 1,
+    dataBits: 1,
   });
   const [out, setOut] = useState(0);
   
   useEffect(() => {
-    setHandInputData((getChipData(nodeId) ?? getChipData('handInput')) as { label: string });
+    setHandInputData((getChipData(nodeId) ?? getChipData('handInput')) as { label: string, dataBits: number });
   }, [chipData, getChipData, nodeId]);
   
   // 更新输出
   const updateHandInputData = () => {
-    updateData(nodeId, 'out', Number(!out));
+    updateData(nodeId, 'out', Number(Number(!out).toString().repeat(handInputData.dataBits)));
     setOut(prev => Number(!prev));
   }
   
@@ -31,8 +31,8 @@ const HandInput = () => {
   
   
   // 处理表单提交
-  const handleSubmit = (values: { label: string; /*dataBits: number;*/ }) => {
-    setHandInputData({...values});
+  const handleSubmit = (values: { label: string; dataBits: number; }) => {
+    setHandInputData(values);
     updateChipData(nodeId, values);
     void message.success('配置成功');
     closeEditHandInput();
@@ -41,8 +41,9 @@ const HandInput = () => {
   return (
     <>
       <h3>{handInputData.label}</h3>
-      <div className="handInput" onClick={updateHandInputData}>
-        <div className='handInput-circle' style={{backgroundColor: out ? 'green' : 'red'}}/>
+      <div className="handInput">
+        <div className='handInput-circle' style={{backgroundColor: out ? 'green' : 'red'}}
+             onClick={updateHandInputData}/>
         
         <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditHandInput}/>
@@ -63,9 +64,9 @@ interface HandInputModalProps {
   closeEditHandInput: () => void;
   initialValues: {
     label: string;
-    // dataBits: number;
+    dataBits: number;
   };
-  onSubmit: (values: { label: string; /*dataBits: number;*/ }) => void;
+  onSubmit: (values: { label: string; dataBits: number; }) => void;
 }
 
 const HandInputModal: React.FC<HandInputModalProps> = ({open, closeEditHandInput, initialValues, onSubmit}) => {
@@ -95,12 +96,12 @@ const HandInputModal: React.FC<HandInputModalProps> = ({open, closeEditHandInput
         >
           <Input/>
         </Form.Item>
-        {/*<Form.Item*/}
-        {/*  name="dataBits" label="Data Bits"*/}
-        {/*  rules={[{required: true, message: '请输入数据位数!'}]}*/}
-        {/*>*/}
-        {/*  <InputNumber min={1} max={32}/>*/}
-        {/*</Form.Item>*/}
+        <Form.Item
+          name="dataBits" label="Data Bits"
+          rules={[{required: true, message: '请输入数据位数!'}]}
+        >
+          <InputNumber min={1} max={32}/>
+        </Form.Item>
       </Form>
     </Modal>
   );

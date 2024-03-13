@@ -64,6 +64,7 @@ export const chipData = {
   },
   handInput: {
     label: "HandInput",
+    dataBits: 1,
   },
   splitter: {
     label: "Splitter",
@@ -92,5 +93,13 @@ export const chipData = {
     dataBits: 1,
     label: "ROM",
     dataSource: {}
+  },
+  one: {
+    label: "1",
+    dataBits: 1,
+  },
+  zero: {
+    label: "0",
+    dataBits: 1,
   }
 }

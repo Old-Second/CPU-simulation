@@ -85,7 +85,7 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
         sourcePort: connection.sourceHandle ?? '',
         targetId: connection.target ?? '',
         targetPort: connection.targetHandle ?? '',
-        data: get().nodes.find(obj => obj.id === connection.source)?.type === "one" ? 1 : 0,
+        data: 0,
       },
     };
     // 设置新的边和数据

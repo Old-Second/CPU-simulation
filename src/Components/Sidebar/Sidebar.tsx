@@ -10,7 +10,9 @@ const Sidebar = () => {
   
   return (
     <Sider collapsible theme="light" width={'12vw'}>
-      {nodeTypesArray.map((item) => <DraggableItem key={item} type={item}/>)}
+      {nodeTypesArray.map((item) => {
+        return (<div key={item} style={{height: '30px'}}><DraggableItem key={item} type={item}/></div>)
+      })}
     </Sider>
   )
 };

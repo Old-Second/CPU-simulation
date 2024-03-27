@@ -3,8 +3,6 @@ import DigitalTube from "../Components/DigitalTube/DigitalTube.tsx";
 import Rom from "../Components/Rom/Rom.tsx";
 import Adder from "../Components/Adder/Adder.tsx";
 import Multiplexer from "../Components/Multiplexer/Multiplexer.tsx";
-import One from "../Components/One/One.tsx";
-import Zero from "../Components/Zero/Zero.tsx";
 import Ram from "../Components/Ram/Ram.tsx";
 import Demultiplexer from "../Components/Demultiplexer/Demultiplexer.tsx";
 import Not from "../Components/Not/Not.tsx";
@@ -13,6 +11,7 @@ import Splitter from "../Components/Splitter/Splitter.tsx";
 import Reg from "../Components/Reg/Reg.tsx";
 import TunnelOut from "../Components/Tunnel/TunnelOut.tsx";
 import TunnelIn from "../Components/Tunnel/TunnelIn.tsx";
+import Constant from "../Components/Constant/Constant.tsx";
 
 export const NodeTypes = {
   // circuitNode: CircuitNode,
@@ -26,8 +25,7 @@ export const NodeTypes = {
   multiplexer: Multiplexer,
   demultiplexer: Demultiplexer,
   not: Not,
-  one: One,
-  zero: Zero,
+  constant: Constant,
   handInput: HandInput,
   splitter: Splitter,
   tunnelIn: TunnelIn,
@@ -94,12 +92,8 @@ export const chipData = {
     label: "ROM",
     dataSource: {}
   },
-  one: {
-    label: "1",
-    dataBits: 1,
+  constant: {
+    label: "Constant",
+    value: 1,
   },
-  zero: {
-    label: "0",
-    dataBits: 1,
-  }
 }

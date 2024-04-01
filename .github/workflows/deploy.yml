@@ -2,7 +2,7 @@ name: Deploy Pages
 
 on:
   push:
-    branches: [main]
+    branches: [ main,digitalTube ]
   workflow_dispatch:
 
 permissions:
@@ -15,35 +15,66 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-main:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: pnpm/action-setup@v3
         with:
           version: 8
-      - name: Setup Node
+      - name: Setup Node main
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: pnpm
-      - name: Setup Pages
+      - name: Setup Pages main
         uses: actions/configure-pages@v4
-      - name: Install dependencies
+      - name: Install dependencies main
         run: pnpm install
-      - name: Build
+      - name: Build main
         run: pnpm run build
-      - name: Upload artifact
+      - name: Upload artifact main
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+  build-digitalTube:
+    needs: build-main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout digitalTube
+        uses: actions/checkout@v4
+        with:
+          ref: digitalTube
+      - name: Setup Node digitalTube
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - name: Setup Pages digitalTube
+        uses: actions/configure-pages@v4
+      - name: Install dependencies digitalTube
+        run: npm install
+      - name: Build digitalTube
+        run: npm run build
+      - name: Move files to digitalTube
+        run: |
+          mkdir -p dist/digitalTube
+          cd dist
+          mv `ls|grep -v "digitalTube"` digitalTube
+      - name: Upload artifact digitalTube
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/digitalTube
 
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
+    needs: [ build-main, build-digitalTube ]
     runs-on: ubuntu-latest
     name: Deploy
     steps:

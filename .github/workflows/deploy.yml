@@ -37,7 +37,7 @@ jobs:
       - name: Build main
         run: pnpm run build
       - name: Upload artifact main
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           name: main
           path: dist
@@ -67,7 +67,7 @@ jobs:
           cd dist
           mv `ls|grep -v "digitalTube"` digitalTube
       - name: Upload artifact digitalTube
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           name: digitalTube
           path: dist/digitalTube
@@ -81,16 +81,18 @@ jobs:
     name: Deploy
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: main
           path: dist
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: digitalTube
           path: dist/digitalTube
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact-directory: dist

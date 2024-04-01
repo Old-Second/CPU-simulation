@@ -2,7 +2,7 @@ name: Deploy Pages (digitalTube)
 
 on:
   push:
-    branches: [digitalTube]
+    branches: [ digitalTube ]
   workflow_dispatch:
 
 permissions:
@@ -39,7 +39,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}/digitalTube
+      url: ${{ steps.deployment.outputs.page_url }}digitalTube
     needs: build
     runs-on: ubuntu-latest
     name: Deploy

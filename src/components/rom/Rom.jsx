@@ -1,5 +1,5 @@
 import './index.css'
-import React, {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {Form, Input, InputNumber, message, Modal, Table} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 
@@ -7,8 +7,8 @@ const {Column} = Table;
 
 
 const Rom = ({A, sel, changeRom}) => {
-  const [romInput, setRomInput] = useState({A: 0, sel: 0});
-  const [romData, setRomData] = useState({addressBits: 1, dataBits: 1, label: "ROM", dataSource: {}});
+  // const [romInput, setRomInput] = useState({A: 0, sel: 0});
+  const [romData, setRomData] = useState({addressBits: 1, dataBits: 1, label: "ROM", dataSource: []});
 
   // useEffect(() => {
   //   setRomData((getChipData(nodeId) ?? getChipData('rom')));
@@ -27,9 +27,9 @@ const Rom = ({A, sel, changeRom}) => {
     // const {A, sel} = romInput;
     if (sel === 1) {
       changeRom(romData.dataSource[A])
-      console.log(romData)
+      console.log('out', romData)
     }
-  }, [A, changeRom, romData.dataSource, sel]);
+  }, [A, changeRom, romData, romData.dataSource, sel]);
 
   const [open, setOpen] = useState(false);
   const openEditRom = () => setOpen(true);
@@ -71,37 +71,28 @@ export default Rom;
 const RomModal = ({open, closeEditRom, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
   const [dataBits, setDataBits] = useState(1);
+  const [addressBits, setAddressBits] = useState(1);
   const [dataSource, setDataSource] = useState([]);
 
   // 生成数据源
-  const generateDataSource = useCallback((addressBits) => {
+  const generateDataSource = useCallback((addressBits, dataSource) => {
     const rowCount = Math.pow(2, addressBits);
     const newData = Array.from({length: rowCount}, (_, i) => ({
       key: i,
       address: i > 9 ? `0x${i.toString(16).toUpperCase()}` : i.toString(),
-      value: '0',
+      value: dataSource[i] ? dataSource[i].value : '0',
     }));
-    if (initialValues.dataSource[0]) {
-      Array.from({length: rowCount}, (_, i) => {
-            const newValue = initialValues.dataSource[i].toString();
-            const maxHexValue = Math.pow(2, initialValues.dataBits) - 1;
-            if (parseInt(newValue, 16) > maxHexValue) {
-              // 如果超出最大值，设置为最大可能的值
-              newData[i].value = maxHexValue > 9 ? `0x${maxHexValue.toString(16).toUpperCase()}` : String(maxHexValue);
-            } else {
-              // 未超出最大值，直接更新为新输入的值，保留十六进制格式
-              newData[i].value = parseInt(newValue, 16) > 9 ? `0x${newValue}` : newValue;
-            }
-          }
-      );
-    }
-    setDataSource(newData);
-    console.log(newData)
-  }, [initialValues.dataBits, initialValues.dataSource]);
+    console.log('init', newData);
+    return newData;
+  }, []);
 
   useEffect(() => {
-    generateDataSource(initialValues.addressBits);
-  }, [generateDataSource, initialValues.addressBits]);
+    const newData = generateDataSource(addressBits, dataSource);
+    if (newData.length !== dataSource.length) {
+      setDataSource(newData);
+    }
+  }, [addressBits, dataSource, generateDataSource]);
+
 
   // 处理表单提交
   const handleOk = () => {
@@ -131,6 +122,7 @@ const RomModal = ({open, closeEditRom, initialValues, onSubmit}) => {
       newData[index].value = parseInt(newValue, 16) > 9 ? `0x${newValue}` : newValue;
     }
     setDataSource(newData);
+    console.log('change', newData)
   }, [dataBits, dataSource])
 
   return (
@@ -153,7 +145,7 @@ const RomModal = ({open, closeEditRom, initialValues, onSubmit}) => {
               name="addressBits" label="Address Bits"
               rules={[{required: true, message: '请输入地址位数!'}]}
           >
-            <InputNumber min={1} max={32} onChange={value => generateDataSource(value)}/>
+            <InputNumber min={1} max={32} onChange={value => setAddressBits(value)}/>
           </Form.Item>
           <Form.Item
               name="label" label="label"

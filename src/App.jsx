@@ -8,7 +8,6 @@ function App() {
   const [number, setNumber] = useState(8)
   const changeCounter = (num) => {
     setNumber(num)
-    console.log(num)
   }
 
   const [rom, setRom] = useState(0)
@@ -18,7 +17,7 @@ function App() {
   }, [])
   const changeRom = (num) => {
     setRom(num)
-    console.log(num)
+    console.log('outt', num)
   }
 
   return (

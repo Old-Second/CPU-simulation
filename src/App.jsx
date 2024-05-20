@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import './App.css'
 import DigitalTube from "./components/DigitalTube/index.jsx";
 import TestCounter from "./components/elements/test/testCounter.jsx";
@@ -10,11 +10,11 @@ function App() {
     setNumber(num)
   }
 
-  const [rom, setRom] = useState(0)
+  const [rom, setRom] = useState('0000000')
 
-  useEffect(() => {
-    setRom(0)
-  }, [])
+  // useEffect(() => {
+  //   setRom(0)
+  // }, [])
   const changeRom = (num) => {
     setRom(num)
     console.log('outt', num)
@@ -26,9 +26,10 @@ function App() {
         <div className="conductor1"></div>
         <Rom A={number} sel={1} changeRom={changeRom}></Rom>
         <div className="conductor2"></div>
-        <div className="DigitalTube1"><DigitalTube value={Math.floor(((rom % 100) / 10) > 0 ? ((rom % 100) / 10) : 0)}/>
+        {/*<div className="DigitalTube1"><DigitalTube value={Math.floor(((rom % 100) / 10) > 0 ? ((rom % 100) / 10) : 0)}/>*/}
+        <div className="DigitalTube1"><DigitalTube value={rom}/>
         </div>
-        <div className="DigitalTube2"><DigitalTube value={rom % 10 > 0 ? rom % 10 : 0}/></div>
+        {/*<div className="DigitalTube2"><DigitalTube value={rom % 10 > 0 ? rom % 10 : 0}/></div>*/}
 
         {/*<input type="number" onChange={(e) => {*/}
         {/*    setNumber(e.target.value)*/}

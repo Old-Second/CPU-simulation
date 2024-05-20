@@ -100,7 +100,7 @@ const RomModal = ({open, closeEditRom, initialValues, onSubmit}) => {
         .validateFields()
         .then((values) => {
           const decimalDataSource = dataSource.reduce((acc, item) => {
-            acc[item.address] = parseInt(item.value, 16);
+            acc[item.address] = item.value;
             return acc;
           }, {});
           onSubmit({...values, dataSource: decimalDataSource});
@@ -110,20 +110,43 @@ const RomModal = ({open, closeEditRom, initialValues, onSubmit}) => {
         });
   };
 
+  // const inputDataSource = useCallback((newValue, index) => {
+  //   const newData = [...dataSource];
+  //   const maxHexValue = Math.pow(2, dataBits) - 1;
+  //   // 检查输入的值是否小于2^(Data Bits)位的十六进制数字
+  //   if (parseInt(newValue, 16) > maxHexValue) {
+  //     // 如果超出最大值，设置为最大可能的值
+  //     newData[index].value = maxHexValue > 9 ? `0x${maxHexValue.toString(16).toUpperCase()}` : String(maxHexValue);
+  //   } else {
+  //     // 未超出最大值，直接更新为新输入的值，保留十六进制格式
+  //     newData[index].value = parseInt(newValue, 16) > 9 ? `0x${newValue}` : newValue;
+  //   }
+  //   setDataSource(newData);
+  //   console.log('change', newData)
+  // }, [dataBits, dataSource])
+
   const inputDataSource = useCallback((newValue, index) => {
     const newData = [...dataSource];
-    const maxHexValue = Math.pow(2, dataBits) - 1;
-    // 检查输入的值是否小于2^(Data Bits)位的十六进制数字
-    if (parseInt(newValue, 16) > maxHexValue) {
-      // 如果超出最大值，设置为最大可能的值
-      newData[index].value = maxHexValue > 9 ? `0x${maxHexValue.toString(16).toUpperCase()}` : String(maxHexValue);
+    const maxBinaryValue = Math.pow(2, dataBits) - 1;
+
+    // 如果输入为空，设置为默认值 "0"
+    if (newValue === "") {
+      newData[index].value = "0";
     } else {
-      // 未超出最大值，直接更新为新输入的值，保留十六进制格式
-      newData[index].value = parseInt(newValue, 16) > 9 ? `0x${newValue}` : newValue;
+      // 检查输入的值是否小于 2^dataBits
+      if (parseInt(newValue, 2) > maxBinaryValue) {
+        // 如果超出最大值，设置为最大可能的值
+        newData[index].value = maxBinaryValue.toString(2);
+      } else {
+        // 未超出最大值，直接更新为新输入的值，保留二进制格式
+        newData[index].value = parseInt(newValue, 2).toString(2);
+      }
     }
+
     setDataSource(newData);
-    console.log('change', newData)
-  }, [dataBits, dataSource])
+    console.log('change', newData);
+  }, [dataBits, dataSource]);
+
 
   return (
       <Modal
@@ -168,7 +191,7 @@ const RomModal = ({open, closeEditRom, initialValues, onSubmit}) => {
                   <Input
                       value={text}
                       onChange={(e) => {
-                        inputDataSource(e.target.value.toUpperCase(), index)
+                        inputDataSource(e.target.value, index)
                       }}
                   />
               )}

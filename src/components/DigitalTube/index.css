@@ -40,58 +40,9 @@
     left: 0;
 }
 
-.segment-1 {
-    top: 60px; /* 调整数码管段1的位置 */
-    left: 20px;
-}
-
-.segment-1::before {
-    border-width: 15px 0 15px 15px;
-    border-color: #1abc9c transparent #1abc9c transparent;
-    top: 0;
-    left: 0;
-}
-
-.segment-2 {
-    top: 130px; /* 调整数码管段2的位置 */
-    left: 20px;
-}
-
-.segment-2::before {
-    border-width: 15px 0 15px 15px;
-    border-color: #1abc9c transparent #1abc9c transparent;
-    top: 0;
-    left: 0;
-}
-
-.segment-3 {
-    transform: rotate(90deg) translateX(15px) translateY(15px);
-    top: 100px; /* 调整数码管段3的位置 */
-    left: 70px; /* 调整数码管段3的位置 */
-}
-
-.segment-3::before {
-    border-width: 0 0 15px 15px;
-    border-color: transparent transparent #1abc9c transparent;
-    top: 0;
-    left: 0;
-}
-
-.segment-4 {
-    top: 130px; /* 调整数码管段4的位置 */
-    left: 120px; /* 调整数码管段4的位置 */
-}
-
-.segment-4::before {
-    border-width: 15px 0 15px 15px;
-    border-color: #1abc9c transparent #1abc9c transparent;
-    top: 0;
-    left: 0;
-}
-
 .segment-5 {
     top: 60px; /* 调整数码管段5的位置 */
-    left: 120px; /* 调整数码管段5的位置 */
+    left: 20px;
 }
 
 .segment-5::before {
@@ -101,13 +52,62 @@
     left: 0;
 }
 
+.segment-4 {
+    top: 130px; /* 调整数码管段4的位置 */
+    left: 20px;
+}
+
+.segment-4::before {
+    border-width: 15px 0 15px 15px;
+    border-color: #1abc9c transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
 .segment-6 {
+    transform: rotate(90deg) translateX(15px) translateY(15px);
+    top: 100px; /* 调整数码管段6的位置 */
+    left: 70px; /* 调整数码管段6的位置 */
+}
+
+.segment-6::before {
+    border-width: 0 0 15px 15px;
+    border-color: transparent transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+.segment-2 {
+    top: 130px; /* 调整数码管段2的位置 */
+    left: 120px; /* 调整数码管段2的位置 */
+}
+
+.segment-2::before {
+    border-width: 15px 0 15px 15px;
+    border-color: #1abc9c transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+.segment-1 {
+    top: 60px; /* 调整数码管段1的位置 */
+    left: 120px; /* 调整数码管段1的位置 */
+}
+
+.segment-1::before {
+    border-width: 15px 0 15px 15px;
+    border-color: #1abc9c transparent #1abc9c transparent;
+    top: 0;
+    left: 0;
+}
+
+.segment-3 {
     transform: rotate(90deg) translateX(30px) translateY(15px);
     top: 170px;
     left: 70px;
 }
 
-.segment-6::before {
+.segment-3::before {
     border-width: 15px 0 15px 15px;
     border-color: #1abc9c transparent #1abc9c transparent;
     top: 0;

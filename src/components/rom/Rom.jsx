@@ -131,15 +131,15 @@ const RomModal = ({open, closeEditRom, initialValues, onSubmit}) => {
 
     // 如果输入为空，设置为默认值 "0"
     if (newValue === "") {
-      newData[index].value = "0";
+      newData[index].value = "0".padStart(dataBits, '0');
     } else {
       // 检查输入的值是否小于 2^dataBits
       if (parseInt(newValue, 2) > maxBinaryValue) {
         // 如果超出最大值，设置为最大可能的值
-        newData[index].value = maxBinaryValue.toString(2);
+        newData[index].value = maxBinaryValue.toString(2).padStart(dataBits, '0');
       } else {
         // 未超出最大值，直接更新为新输入的值，保留二进制格式
-        newData[index].value = parseInt(newValue, 2).toString(2);
+        newData[index].value = parseInt(newValue, 2).toString(2).padStart(dataBits, '0');
       }
     }
 

@@ -8,7 +8,7 @@ const {Column} = Table;
 
 const Rom = ({A, sel, changeRom}) => {
   // const [romInput, setRomInput] = useState({A: 0, sel: 0});
-  const [romData, setRomData] = useState({addressBits: 1, dataBits: 1, label: "ROM", dataSource: []});
+  const [romData, setRomData] = useState({addressBits: 1, dataBits: 7, label: "ROM", dataSource: []});
 
   // useEffect(() => {
   //   setRomData((getChipData(nodeId) ?? getChipData('rom')));

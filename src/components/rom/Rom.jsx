@@ -70,7 +70,7 @@ export default Rom;
 
 const RomModal = ({open, closeEditRom, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
-  const [dataBits, setDataBits] = useState(1);
+  const [dataBits, setDataBits] = useState(7);
   const [addressBits, setAddressBits] = useState(1);
   const [dataSource, setDataSource] = useState([]);
 
@@ -162,7 +162,7 @@ const RomModal = ({open, closeEditRom, initialValues, onSubmit}) => {
               name="dataBits" label="Data Bits"
               rules={[{required: true, message: '请输入数据位数!'}]}
           >
-            <InputNumber min={1} max={32} onChange={value => setDataBits(value)}/>
+            <InputNumber disabled min={1} max={32} onChange={value => setDataBits(value)}/>
           </Form.Item>
           <Form.Item
               name="addressBits" label="Address Bits"

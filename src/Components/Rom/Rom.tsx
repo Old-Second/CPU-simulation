@@ -105,16 +105,16 @@ interface RomModalProps {
 
 const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
-  const [dataBits, setDataBits] = useState<number>(1);
+  const [dataBits, setDataBits] = useState<number>(initialValues.dataBits);
   const [dataSource, setDataSource] = React.useState<Array<{ key: number; address: string; value: string }>>([]);
   
   // 生成数据源
-  const generateDataSource = (addressBits: number) => {
+  const generateDataSource = useCallback((addressBits: number) => {
     const rowCount = Math.pow(2, addressBits);
     const newData = Array.from({length: rowCount}, (_, i) => ({
       key: i,
       address: i > 9 ? `0x${i.toString(16).toUpperCase()}` : i.toString(),
-      value: '',
+      value: '0',
     }));
     if (initialValues.dataSource[0]) {
       Array.from({length: rowCount}, (_, i) => {
@@ -131,7 +131,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
       );
     }
     setDataSource(newData);
-  };
+  }, [initialValues.dataBits, initialValues.dataSource]);
   
   useEffect(() => {
     generateDataSource(initialValues.addressBits);

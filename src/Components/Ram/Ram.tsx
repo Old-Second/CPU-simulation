@@ -115,8 +115,8 @@ const RamModal: React.FC<RamModalProps> = ({
                                              open, closeEditRam, DOut, initialValues, onSubmit
                                            }) => {
   const [form] = Form.useForm();
-  const [dataBits, setDataBits] = useState<number>(1);
-  const [addressBits, setAddressBits] = useState<number>(1);
+  const [dataBits, setDataBits] = useState<number>(initialValues.dataBits);
+  const [addressBits, setAddressBits] = useState<number>(initialValues.addressBits);
   
   // 生成数据源
   const generateDataSource = useCallback((addressBits: number) => {

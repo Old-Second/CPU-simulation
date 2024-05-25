@@ -3,7 +3,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import React, {useEffect, useState} from "react";
 import useDataStore from "../../store/useDataStore.ts";
 import {selector} from "../../utils/selector.ts";
-import {Form, InputNumber, message, Modal} from "antd";
+import {Form, Input, message, Modal} from "antd";
 
 const Constant = () => {
   const {updateData, chipData, updateChipData, getChipData} = useDataStore(selector);
@@ -28,9 +28,10 @@ const Constant = () => {
   
   
   // 处理表单提交
-  const handleSubmit = (values: { label: string; value: number; }) => {
-    setConstantData(values);
-    updateChipData(nodeId, values);
+  const handleSubmit = (values: { label: string; value: string; }) => {
+    const parsedValue = parseInt(values.value, 16);
+    setConstantData({...values, value: parsedValue});
+    updateChipData(nodeId, {...values, value: parsedValue});
     void message.success('配置成功');
     closeEditConstant();
   };
@@ -38,7 +39,7 @@ const Constant = () => {
   return (
     <>
       <div style={{padding: 2}}>
-        <h2>{constantData.value}</h2>
+        <h2>{constantData.value > 9 ? '0x' + constantData.value.toString(16).toUpperCase() : constantData.value.toString(16).toUpperCase()}</h2>
         <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditConstant}/>
           <ConstantModal open={open} closeEditConstant={closeEditConstant} initialValues={constantData}
@@ -59,7 +60,7 @@ interface ConstantModalProps {
     label: string;
     value: number;
   };
-  onSubmit: (values: { label: string; value: number; }) => void;
+  onSubmit: (values: { label: string; value: string; }) => void;
 }
 
 const ConstantModal: React.FC<ConstantModalProps> = ({open, closeEditConstant, initialValues, onSubmit}) => {
@@ -86,9 +87,15 @@ const ConstantModal: React.FC<ConstantModalProps> = ({open, closeEditConstant, i
       <Form form={form} name="ConstantConfiguration" initialValues={initialValues}>
         <Form.Item
           name="value" label="Value"
-          rules={[{required: true, message: '请输入数据!'}]}
+          rules={[
+            {required: true, message: '请输入数据!'},
+            {
+              pattern: /^[0-9a-fA-F]+$/,
+              message: '请输入有效的十六进制字符串!',
+            },
+          ]}
         >
-          <InputNumber/>
+          <Input/>
         </Form.Item>
       </Form>
     </Modal>

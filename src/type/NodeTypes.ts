@@ -12,6 +12,7 @@ import Reg from "../Components/Reg/Reg.tsx";
 import TunnelOut from "../Components/Tunnel/TunnelOut.tsx";
 import TunnelIn from "../Components/Tunnel/TunnelIn.tsx";
 import Constant from "../Components/Constant/Constant.tsx";
+import Or from "../Components/Or/Or.tsx";
 
 export const NodeTypes = {
   // circuitNode: CircuitNode,
@@ -25,6 +26,7 @@ export const NodeTypes = {
   multiplexer: Multiplexer,
   demultiplexer: Demultiplexer,
   not: Not,
+  or: Or,
   constant: Constant,
   handInput: HandInput,
   splitter: Splitter,
@@ -58,6 +60,10 @@ export const chipData = {
   },
   not: {
     label: "Not",
+    rotation: 0,
+  },
+  or: {
+    label: "Or",
     rotation: 0,
   },
   handInput: {

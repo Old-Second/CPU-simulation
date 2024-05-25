@@ -42,8 +42,8 @@ const Not = () => {
   
   // 处理表单提交
   const handleSubmit = (values: { label: string; rotation: number; }) => {
-    setNotData({...values});
-    updateChipData(nodeId, values);
+    setNotData({...values, label: 'Not'});
+    updateChipData(nodeId, {...values, label: 'Not'});
     updateNodeInternals(nodeId);
     void message.success('配置成功');
     closeEditNot();

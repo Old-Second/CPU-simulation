@@ -15,6 +15,7 @@ import {
 import {DataState, ChipConfigValue, chipData, ChipDataType, ChipType, ChipDataState} from "../type/Data.ts";
 import {createWithEqualityFn} from "zustand/traditional";
 import {shallow} from "zustand/shallow";
+import {produce} from "immer";
 
 export interface RFState {
   nodes: Node[];
@@ -86,61 +87,43 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
   },
   // 更新数据
   updateData: (sourceId: string, sourcePort: string, newData: number) => {
-    const currentState = get();
-    const currentData = currentState.data;
-    // 查找要更新的数据项
-    const foundItemKey = Object.keys(currentData).find(
-      key => currentData[key].sourceId === sourceId && currentData[key].sourcePort === sourcePort
-    );
-    // 如果找到匹配的数据项，更新其数据
-    if (foundItemKey && currentData[foundItemKey].data !== newData) {
-      const newDataState = {
-        ...currentState.data,
-        [foundItemKey]: {...currentState.data[foundItemKey], data: newData},
-      };
-      // 设置新的数据状态
-      set({data: newDataState});
-    } else if (sourceId === 'TunnelIn') {
-      const newEdgeDataKey = `reactflow__edge-${sourceId}`;
-      // 更新数据
-      const newDataState = {
-        ...currentState.data,
-        [newEdgeDataKey]: {
+    set(produce<RFState>(draft => {
+      const itemsToUpdate = Object.values(draft.data).filter((item) =>
+        (item.sourceId === sourceId && item.sourcePort === sourcePort)
+      );
+      
+      itemsToUpdate.forEach(item => {
+        item.data = newData;
+      });
+      
+      // 检查是否需要添加新项
+      if (sourceId === 'TunnelIn' && !Object.values(draft.data).some(item => item.sourcePort === sourcePort)) {
+        const newEdgeDataKey = `reactflow__edge-${sourceId}-${sourcePort}`;
+        draft.data[newEdgeDataKey] = {
           sourceId: 'TunnelIn',
-          sourcePort: sourcePort ?? '',
+          sourcePort: sourcePort,
           targetId: 'TunnelOut',
-          targetPort: sourcePort ?? '',
+          targetPort: sourcePort,
           data: newData,
-        },
-      };
-      set({data: newDataState});
-    }
+        };
+      }
+    }));
   },
   getData: (targetId: string, targetPort: string) => {
-    const currentState = get();
-    const currentData = currentState.data;
-    // 找到满足条件的元素
-    const foundItemKey = Object.keys(currentData).find(key => {
-      const {targetId: itemTargetId, targetPort: itemTargetPort} = currentData[key];
-      return itemTargetId === targetId && itemTargetPort === targetPort;
-    });
-    
-    // 返回满足条件的元素的数据，如果没有找到则返回默认值 0
-    return foundItemKey ? currentData[foundItemKey].data : 0;
+    const data = get().data;
+    // 直接查找并返回满足条件的元素数据，或默认值0
+    return Object.values(data).find(item => item.targetId === targetId && item.targetPort === targetPort)?.data ?? 0;
   },
   setChipData: (chipData: ChipDataState) => {
     set({chipData});
   },
   updateChipData: (chipId: string, chipData: ChipDataType[ChipType]) => {
-    const currentState = get();
-    const currentChipData = currentState.chipData;
-    if (currentChipData[chipId] !== chipData) {
-      const newChipDataState = {
-        ...currentState.chipData,
-        [chipId]: chipData,
-      };
-      set({chipData: newChipDataState});
-    }
+    set(produce<RFState>(draft => {
+      // 直接更新或添加新的chipData项
+      if (!draft.chipData.hasOwnProperty(chipId) || draft.chipData[chipId] !== chipData) {
+        draft.chipData[chipId] = chipData;
+      }
+    }));
   },
   getChipData: (chipId: string) => {
     return get().chipData[chipId];

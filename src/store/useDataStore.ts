@@ -29,9 +29,11 @@ export interface RFState {
   setEdges: (edges: Edge[]) => void;
   setData: (data: DataState) => void;
   updateData: (sourceId: string, sourcePort: string, newData: number) => void;
+  deleteData: (chipId: string) => void;
   getData: (targetId: string, targetPort: string) => number;
   setChipData: (newData: ChipDataState) => void;
   updateChipData: (chipId: string, chipData: ChipConfigValue) => void;
+  deleteChipData: (chipId: string) => void;
   getChipData: (chipId: string) => ChipConfigValue;
 }
 
@@ -42,6 +44,15 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
   data: {},
   chipData: chipData,
   onNodesChange: (changes: NodeChange[]) => {
+    console.log(changes)
+    if (changes[0].type === 'remove') {
+      changes.forEach(node => {
+        if (node.type === "remove") {
+          get().deleteChipData(node.id);
+          get().deleteData(node.id);
+        }
+      });
+    }
     set({
       nodes: applyNodeChanges(changes, get().nodes),
     });
@@ -109,6 +120,19 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
       }
     }));
   },
+  deleteData: (sourceId: string) => {
+    set(produce<RFState>(draft => {
+      // 查找并删除匹配的项
+      const keysToDelete = Object.keys(draft.data).filter(key => {
+        const item = draft.data[key];
+        return item.sourceId === sourceId;
+      });
+      
+      keysToDelete.forEach(key => {
+        delete draft.data[key];
+      });
+    }));
+  },
   getData: (targetId: string, targetPort: string) => {
     const data = get().data;
     // 直接查找并返回满足条件的元素数据，或默认值0
@@ -122,6 +146,14 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
       // 直接更新或添加新的chipData项
       if (!draft.chipData.hasOwnProperty(chipId) || draft.chipData[chipId] !== chipData) {
         draft.chipData[chipId] = chipData;
+      }
+    }));
+  },
+  deleteChipData: (chipId: string) => {
+    set(produce<RFState>(draft => {
+      // 检查是否存在要删除的chipId，存在则删除
+      if (draft.chipData.hasOwnProperty(chipId)) {
+        delete draft.chipData[chipId];
       }
     }));
   },

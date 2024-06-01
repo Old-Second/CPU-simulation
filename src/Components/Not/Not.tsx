@@ -31,7 +31,7 @@ const Not = () => {
   
   // 更新输出
   useEffect(() => {
-    const invertedInput = Number(String(notInput).split('').map(bit => bit === '0' ? '1' : '0').join(''));
+    const invertedInput = parseInt(notInput.toString(2).split('').map(bit => bit === '0' ? '1' : '0').join(''), 2);
     updateData(nodeId, 'out', invertedInput);
   }, [edges, notInput, nodeId, updateData]);
   

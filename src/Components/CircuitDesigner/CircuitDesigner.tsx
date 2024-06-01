@@ -1,14 +1,5 @@
 import {
-  BackgroundVariant,
-  Connection,
-  Edge,
-  Node,
-  OnConnect,
-  OnEdgesChange,
-  OnNodesChange,
-  Panel,
-  ReactFlowInstance,
-  updateEdge,
+  BackgroundVariant, Edge, Node, OnConnect, OnEdgesChange, OnNodesChange, Panel, ReactFlowInstance,
 } from "reactflow";
 import './index.css'
 import {useCallback, useRef, useState} from 'react';
@@ -26,19 +17,17 @@ const selector = (state: {
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
-  setEdges: (edges: Edge[]) => void;
 }) => ({
   nodes: state.nodes,
   edges: state.edges,
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
-  setEdges: state.setEdges,
 });
 
 const CircuitDiagram = () => {
   const reactFlowWrapper = useRef(null);
-  const {nodes, edges, onNodesChange, onEdgesChange, onConnect, setEdges} = useDataStore(selector);
+  const {nodes, edges, onNodesChange, onEdgesChange, onConnect/*, setEdges*/} = useDataStore(selector);
   
   const diagramRef = useRef<HTMLDivElement>(null);
   
@@ -77,25 +66,6 @@ const CircuitDiagram = () => {
     [rfInstance],
   );
   
-  const edgeUpdateSuccessful = useRef(true);
-  
-  const onEdgeUpdateStart = useCallback(() => {
-    edgeUpdateSuccessful.current = false;
-  }, []);
-  
-  const onEdgeUpdate = useCallback((oldEdge: Edge, newConnection: Connection) => {
-    edgeUpdateSuccessful.current = true;
-    setEdges(updateEdge(oldEdge, newConnection, edges));
-  }, [edges, setEdges]);
-  
-  const onEdgeUpdateEnd = useCallback((_: unknown, edge: { id: string; }) => {
-    if (!edgeUpdateSuccessful.current) {
-      setEdges(edges.filter((e) => e.id !== edge.id));
-    }
-    
-    edgeUpdateSuccessful.current = true;
-  }, [edges, setEdges]);
-  
   return (
     <div style={{height: '100vh', width: '88vw'}} ref={reactFlowWrapper}>
       <ReactFlow
@@ -113,9 +83,6 @@ const CircuitDiagram = () => {
         onInit={setRfInstance}
         onDrop={onDrop}
         onDragOver={onDragOver}
-        onEdgeUpdate={onEdgeUpdate}
-        onEdgeUpdateStart={onEdgeUpdateStart}
-        onEdgeUpdateEnd={onEdgeUpdateEnd}
       >
         <Panel position="top-left">
           <Save rfInstance={rfInstance as ReactFlowInstance}/>

@@ -12,10 +12,9 @@ import {
   applyEdgeChanges,
 } from 'reactflow';
 
-import {ChipDataState, DataState} from "../type/Data.ts";
+import {DataState, ChipConfigValue, chipData, ChipDataType, ChipType, ChipDataState} from "../type/Data.ts";
 import {createWithEqualityFn} from "zustand/traditional";
 import {shallow} from "zustand/shallow";
-import {chipData} from "../type/NodeTypes.ts";
 
 export interface RFState {
   nodes: Node[];
@@ -31,8 +30,8 @@ export interface RFState {
   updateData: (sourceId: string, sourcePort: string, newData: number) => void;
   getData: (targetId: string, targetPort: string) => number;
   setChipData: (newData: ChipDataState) => void;
-  updateChipData: (chipId: string, chipData: ChipDataState) => void;
-  getChipData: (chipId: string) => unknown;
+  updateChipData: (chipId: string, chipData: ChipConfigValue) => void;
+  getChipData: (chipId: string) => ChipConfigValue;
 }
 
 
@@ -41,24 +40,6 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
   edges: [],
   data: {},
   chipData: chipData,
-  // 处理节点变化
-  // onNodesChange: (changes: NodeChange[]) => {
-  //   // 使用自定义的比较函数来比较节点内容是否发生了变化
-  //   const areNodesEqual = (nodeA: Node, nodeB: Node) => {
-  //     // 这里可以根据你的节点数据结构定义比较逻辑
-  //     return nodeA.id === nodeB.id && nodeA.position.x === nodeB.position.x && nodeA.position.y === nodeB.position.y;
-  //   };
-  //
-  //   // 应用节点变化，并且只在节点内容发生变化时触发状态更新
-  //   set((state) => {
-  //     const updatedNodes = applyNodeChanges(changes, state.nodes);
-  //     if (updatedNodes.some((node, index) => !areNodesEqual(node, state.nodes[index]))) {
-  //       return {nodes: updatedNodes};
-  //     } else {
-  //       return state;
-  //     }
-  //   })
-  // },
   onNodesChange: (changes: NodeChange[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),
@@ -150,7 +131,7 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
   setChipData: (chipData: ChipDataState) => {
     set({chipData});
   },
-  updateChipData: (chipId: string, chipData: ChipDataState) => {
+  updateChipData: (chipId: string, chipData: ChipDataType[ChipType]) => {
     const currentState = get();
     const currentChipData = currentState.chipData;
     if (currentChipData[chipId] !== chipData) {

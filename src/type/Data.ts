@@ -34,20 +34,7 @@ export type ChipDataType = {
   constant: ConstantConfig;
 }
 
-export type ChipConfigValue =
-  DigitalTubeConfig
-  | AdderConfig
-  | MultiplexerConfig
-  | DemultiplexerConfig
-  | NotConfig
-  | OrConfig
-  | HandInputConfig
-  | SplitterConfig
-  | TunnelInOutConfig
-  | RegConfig
-  | RamConfig
-  | RomConfig
-  | ConstantConfig;
+export type ChipConfigValue = ChipDataType[keyof ChipDataType];
 
 interface DigitalTubeConfig {
   label: string;

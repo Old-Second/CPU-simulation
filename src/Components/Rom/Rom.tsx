@@ -106,7 +106,16 @@ interface RomModalProps {
 const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
   const [dataBits, setDataBits] = useState<number>(initialValues.dataBits);
-  const [dataSource, setDataSource] = React.useState<Array<{ key: number; address: string; value: string }>>([]);
+  const [dataSource, setDataSource] = React.useState<Array<{
+    key: number;
+    address: string;
+    value: string
+  }>>(Object.entries(initialValues.dataSource).map(([address, value], index) => ({
+      key: index,
+      address: address.toString(),
+      value: value.toString()
+    }))
+  );
   
   // 生成数据源
   const generateDataSource = useCallback((addressBits: number) => {
@@ -118,7 +127,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
     }));
     if (initialValues.dataSource[0]) {
       Array.from({length: rowCount}, (_, i) => {
-          const newValue = initialValues.dataSource[i].toString();
+          const newValue = initialValues.dataSource[i]?.toString() ?? '';
           const maxHexValue = Math.pow(2, initialValues.dataBits) - 1;
           if (parseInt(newValue, 16) > maxHexValue) {
             // 如果超出最大值，设置为最大可能的值

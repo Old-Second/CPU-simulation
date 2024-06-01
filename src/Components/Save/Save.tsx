@@ -9,8 +9,8 @@ import FileSaver from "file-saver";
 const selector = (state: {
   data: DataState;
   chipData: ChipDataState;
-  setEdges: (edges: Edge[]) => void;
   setNodes: (nodes: Node[]) => void;
+  setEdges: (edges: Edge[]) => void;
   setData: (data: DataState) => void;
   setChipData: (chipData: ChipDataState) => void;
 }) => ({
@@ -29,15 +29,21 @@ const Save = ({rfInstance}: { rfInstance: ReactFlowInstance }) => {
   // 保存数据到浏览器存储
   const onSave = useCallback(() => {
     if (rfInstance) {
-      const flow = rfInstance.toObject();
-      localStorage.setItem('Circuit', JSON.stringify(flow));
-      localStorage.setItem('data', JSON.stringify(data));
-      localStorage.setItem('chip-data', JSON.stringify(chipData));
+      try {
+        const flow = rfInstance.toObject();
+        localStorage.setItem('Circuit', JSON.stringify(flow));
+        localStorage.setItem('data', JSON.stringify(data));
+        localStorage.setItem('chip-data', JSON.stringify(chipData));
+        void message.success('保存成功');
+      } catch (e) {
+        console.warn(e)
+        void message.error('保存失败');
+      }
     }
   }, [chipData, data, rfInstance]);
   
   // 下载数据
-  const onDownload = useCallback((value: { name: string; }) => {
+  const onDownload = useCallback(async (value: { name: string; }) => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
       // localStorage.setItem('Circuit', JSON.stringify(flow));
@@ -127,7 +133,9 @@ const Save = ({rfInstance}: { rfInstance: ReactFlowInstance }) => {
     form
       .validateFields()
       .then((e) => {
-        onDownload(e);
+        onDownload(e).then(() => {
+          void message.success('导出成功');
+        });
         closeModal();
       })
       .catch((info) => {
@@ -150,7 +158,9 @@ const Save = ({rfInstance}: { rfInstance: ReactFlowInstance }) => {
                     void message.error(`${file.name}格式错误`);
                     return false;
                   }
-                  void onImport(file);
+                  onImport(file).then(() => {
+                    void message.success(`${file.name}导入成功`);
+                  });
                   return false;
                 }}>
           <Button type="primary" icon={<UploadOutlined/>}>导入</Button>

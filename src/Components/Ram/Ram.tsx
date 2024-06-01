@@ -10,7 +10,7 @@ const {Column} = Table;
 
 
 const Ram = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [ramInput, setRamInput] = useState({A: 0, Din: 0, str: 0, C: 0, ld: 0});
   const [ramData, setRamData] = useState<{
@@ -46,7 +46,7 @@ const Ram = () => {
     if (ld === 1 && DOut[A]) {
       updateData(nodeId, 'D', DOut[A]);
     }
-  }, [ramInput, nodeId, ramData, updateData, DOut]);
+  }, [edges, ramInput, nodeId, ramData, updateData, DOut]);
   
   const [open, setOpen] = useState(false);
   const openEditRam = () => setOpen(true);

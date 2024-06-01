@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Demultiplexer = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [demultiplexerInput, setDemultiplexerInput] = useState<{ input: number; sel: number; }>({
@@ -46,7 +46,7 @@ const Demultiplexer = () => {
     // const out = input[sel];
     updateData(nodeId, `out${sel}`, input)
     // updateData(nodeId, 'out', out);
-  }, [demultiplexerInput, demultiplexerData.dataBits, nodeId, updateData]);
+  }, [edges, demultiplexerInput, demultiplexerData.dataBits, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
   const openEditDemultiplexer = () => setOpen(true);

@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Adder = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [adderInput, setAdderInput] = useState({a: 0, b: 0, c_i: 0});
   const [adderData, setAdderData] = useState({
@@ -51,7 +51,7 @@ const Adder = () => {
     
     updateData(nodeId, 's', parseInt(sum));
     updateData(nodeId, 'c_o', co);
-  }, [adderInput, adderData.dataBits, nodeId, updateData]);
+  }, [edges, adderInput, adderData.dataBits, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
   const openEditAdder = () => setOpen(true);

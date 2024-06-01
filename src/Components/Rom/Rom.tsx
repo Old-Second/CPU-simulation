@@ -10,7 +10,7 @@ const {Column} = Table;
 
 
 const Rom = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [romInput, setRomInput] = useState({A: 0, sel: 0});
   const [romData, setRomData] = useState<{
@@ -43,7 +43,7 @@ const Rom = () => {
     if (sel === 1) {
       updateData(nodeId, 'D', romData.dataSource[A])
     }
-  }, [romInput, nodeId, romData, updateData]);
+  }, [edges, romInput, nodeId, romData, updateData]);
   
   const [open, setOpen] = useState(false);
   const openEditRom = () => setOpen(true);

@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Splitter = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [splitterInput, setSplitterInput] = useState('');
@@ -67,7 +67,7 @@ const Splitter = () => {
       currentIndex += length;
       updateData(nodeId, `out-${outPort[i]}`, output);
     });
-  }, [splitterInput, splitterData.OutputSplitting, nodeId, updateData, outPort]);
+  }, [edges, splitterInput, splitterData.OutputSplitting, nodeId, updateData, outPort]);
   
   const [open, setOpen] = useState(false);
   const openEditSplitter = () => setOpen(true);

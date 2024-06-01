@@ -8,7 +8,7 @@ import {selector} from "../../utils/selector.ts";
 
 
 const Reg = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [regInput, setRegInput] = useState({D: 0, C: 0, en: 0});
   const [regData, setRegData] = useState<{ dataBits: number; label: string }>({
@@ -39,7 +39,7 @@ const Reg = () => {
   // 当数据源更改时更新 Q
   useEffect(() => {
     updateData(nodeId, 'Q', Q);
-  }, [nodeId, updateData, Q]);
+  }, [edges, nodeId, updateData, Q]);
   
   const [open, setOpen] = useState(false);
   const openEditReg = () => setOpen(true);

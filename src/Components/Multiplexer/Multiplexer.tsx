@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Multiplexer = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [multiplexerInput, setMultiplexerInput] = useState<{ input: number[]; sel: number; }>({
@@ -47,7 +47,7 @@ const Multiplexer = () => {
     const {input, sel} = multiplexerInput;
     const out = input[sel];
     updateData(nodeId, 'out', out);
-  }, [multiplexerInput, multiplexerData.dataBits, nodeId, updateData]);
+  }, [edges, multiplexerInput, multiplexerData.dataBits, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
   const openEditMultiplexer = () => setOpen(true);

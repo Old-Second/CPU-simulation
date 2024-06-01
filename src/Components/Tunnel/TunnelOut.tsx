@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const TunnelOut = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [tunnelOutInput, setTunnelOutInput] = useState(0);
@@ -32,7 +32,7 @@ const TunnelOut = () => {
   // 更新输出
   useEffect(() => {
     updateData(nodeId, 'out', tunnelOutInput);
-  }, [tunnelOutInput, nodeId, updateData]);
+  }, [edges, tunnelOutInput, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
   const openEditTunnelOut = () => setOpen(true);

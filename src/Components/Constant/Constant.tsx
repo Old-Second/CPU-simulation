@@ -6,7 +6,7 @@ import {selector} from "../../utils/selector.ts";
 import {Form, Input, message, Modal} from "antd";
 
 const Constant = () => {
-  const {updateData, chipData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, updateData, chipData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [constantData, setConstantData] = useState({
     label: "Constant",
@@ -20,8 +20,7 @@ const Constant = () => {
   // 更新输出
   useEffect(() => {
     updateData(nodeId, 'out', Number(constantData.value))
-    console.log(Number(constantData.value))
-  }, [constantData.value, nodeId, updateData]);
+  }, [edges, constantData.value, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
   const openEditConstant = () => setOpen(true);

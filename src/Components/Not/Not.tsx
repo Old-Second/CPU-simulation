@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Not = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [notInput, setNotInput] = useState(0);
@@ -33,7 +33,7 @@ const Not = () => {
   useEffect(() => {
     const invertedInput = Number(String(notInput).split('').map(bit => bit === '0' ? '1' : '0').join(''));
     updateData(nodeId, 'out', invertedInput);
-  }, [notInput, nodeId, updateData]);
+  }, [edges, notInput, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
   const openEditNot = () => setOpen(true);

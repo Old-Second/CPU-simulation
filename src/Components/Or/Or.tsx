@@ -7,7 +7,7 @@ import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../utils/selector.ts";
 
 const Or = () => {
-  const {data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
+  const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
   const [orInput, setOrInput] = useState<number[][]>([[0], [0]]);
@@ -35,7 +35,7 @@ const Or = () => {
   useEffect(() => {
     const output = orInput[0].map((bit, index) => (bit || orInput[1][index]) ? 1 : 0);
     updateData(nodeId, 'out', parseInt(output.join(''), 2));
-  }, [orInput, nodeId, updateData]);
+  }, [edges, orInput, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
   const openEditOr = () => setOpen(true);

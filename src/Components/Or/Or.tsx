@@ -25,10 +25,9 @@ const Or = () => {
   
   // 当数据或节点 ID 更改时更新
   useEffect(() => {
-      const input1 = getData(nodeId, 'in1').toString(2).padStart(32, '0').split('').map(Number);
-      const input2 = getData(nodeId, 'in2').toString(2).padStart(32, '0').split('').map(Number);
+      const input1 = (getData(nodeId, 'in1')?.toString(2) ?? '').padStart(32, '0').split('').map(Number);
+      const input2 = (getData(nodeId, 'in2')?.toString(2) ?? '').padStart(32, '0').split('').map(Number);
       setOrInput([input1, input2]);
-      console.log([input1, input2])
     }, [data, getData, nodeId]
   );
   

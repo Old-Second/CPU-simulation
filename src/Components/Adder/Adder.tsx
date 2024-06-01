@@ -34,8 +34,8 @@ const Adder = () => {
     const {a, b, c_i} = adderInput;
     let sum = '', co = c_i;
     
-    const binA = a.toString().padStart(adderData.dataBits, '0');
-    const binB = b.toString().padStart(adderData.dataBits, '0');
+    const binA = (a?.toString() ?? '').padStart(adderData.dataBits, '0');
+    const binB = (b?.toString() ?? '').padStart(adderData.dataBits, '0');
     
     for (let i = adderData.dataBits - 1; i >= 0; i--) {
       const digitA = parseInt(binA[i], 2);

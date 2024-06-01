@@ -7,6 +7,7 @@ import {
   addEdge,
   OnNodesChange,
   OnEdgesChange,
+  OnEdgesDelete,
   OnConnect,
   applyNodeChanges,
   applyEdgeChanges,
@@ -24,12 +25,14 @@ export interface RFState {
   chipData: ChipDataState;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
+  onEdgesDelete: OnEdgesDelete;
   onConnect: OnConnect;
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
   setData: (data: DataState) => void;
   updateData: (sourceId: string, sourcePort: string, newData: number) => void;
   deleteData: (chipId: string) => void;
+  deleteEdgeData: (edgeId: string) => void;
   getData: (targetId: string, targetPort: string) => number;
   setChipData: (newData: ChipDataState) => void;
   updateChipData: (chipId: string, chipData: ChipConfigValue) => void;
@@ -44,7 +47,6 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
   data: {},
   chipData: chipData,
   onNodesChange: (changes: NodeChange[]) => {
-    console.log(changes)
     if (changes[0].type === 'remove') {
       changes.forEach(node => {
         if (node.type === "remove") {
@@ -63,13 +65,18 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
       edges: applyEdgeChanges(changes, get().edges),
     });
   },
+  onEdgesDelete: (edges: Edge[]) => {
+    edges.forEach(edge => {
+      get().deleteEdgeData(edge.id);
+    });
+  },
   // 处理连接事件
   onConnect: (connection: Connection) => {
     const currentState = get();
     // 添加新边
     const newEdges = addEdge({...connection, type: 'step'}, currentState.edges);
     // 创建新数据项的键
-    const newEdgeDataKey = `reactflow__edge-${connection.source}-${connection.target}`;
+    const newEdgeDataKey = `reactflow__edge-${connection.source}${connection.sourceHandle}-${connection.target}${connection.targetHandle}`;
     // 更新数据
     const newData = {
       ...currentState.data,
@@ -120,12 +127,24 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
       }
     }));
   },
-  deleteData: (sourceId: string) => {
+  deleteData: (chipId: string) => {
     set(produce<RFState>(draft => {
       // 查找并删除匹配的项
       const keysToDelete = Object.keys(draft.data).filter(key => {
         const item = draft.data[key];
-        return item.sourceId === sourceId;
+        return item.sourceId === chipId || item.targetId === chipId;
+      });
+      
+      keysToDelete.forEach(key => {
+        delete draft.data[key];
+      });
+    }));
+  },
+  deleteEdgeData: (edgeId: string) => {
+    set(produce<RFState>(draft => {
+      // 查找并删除匹配的项
+      const keysToDelete = Object.keys(draft.data).filter(key => {
+        return key === edgeId;
       });
       
       keysToDelete.forEach(key => {

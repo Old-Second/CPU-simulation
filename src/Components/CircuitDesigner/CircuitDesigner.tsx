@@ -1,5 +1,5 @@
 import {
-  BackgroundVariant, Edge, Node, OnConnect, OnEdgesChange, OnNodesChange, Panel, ReactFlowInstance,
+  BackgroundVariant, Edge, Node, OnConnect, OnEdgesChange, OnEdgesDelete, OnNodesChange, Panel, ReactFlowInstance,
 } from "reactflow";
 import './index.css'
 import {useCallback, useRef, useState} from 'react';
@@ -16,18 +16,20 @@ const selector = (state: {
   edges: Edge[];
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
+  onEdgesDelete: OnEdgesDelete
   onConnect: OnConnect;
 }) => ({
   nodes: state.nodes,
   edges: state.edges,
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
+  onEdgesDelete: state.onEdgesDelete,
   onConnect: state.onConnect,
 });
 
 const CircuitDiagram = () => {
   const reactFlowWrapper = useRef(null);
-  const {nodes, edges, onNodesChange, onEdgesChange, onConnect/*, setEdges*/} = useDataStore(selector);
+  const {nodes, edges, onNodesChange, onEdgesChange, onEdgesDelete, onConnect} = useDataStore(selector);
   
   const diagramRef = useRef<HTMLDivElement>(null);
   
@@ -83,6 +85,7 @@ const CircuitDiagram = () => {
         onInit={setRfInstance}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        onEdgesDelete={onEdgesDelete}
       >
         <Panel position="top-left">
           <Save rfInstance={rfInstance as ReactFlowInstance}/>

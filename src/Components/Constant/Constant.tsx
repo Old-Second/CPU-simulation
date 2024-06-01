@@ -20,6 +20,7 @@ const Constant = () => {
   // 更新输出
   useEffect(() => {
     updateData(nodeId, 'out', Number(constantData.value))
+    console.log(Number(constantData.value))
   }, [constantData.value, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
@@ -30,7 +31,7 @@ const Constant = () => {
   // 处理表单提交
   const handleSubmit = (values: { label: string; value: string; }) => {
     const parsedValue = parseInt(values.value, 16);
-    setConstantData({...values, value: parsedValue});
+    setConstantData({...values, label: 'Constant', value: parsedValue});
     updateChipData(nodeId, {...values, value: parsedValue});
     void message.success('配置成功');
     closeEditConstant();

@@ -144,7 +144,7 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
   updateChipData: (chipId: string, chipData: ChipDataType[ChipType]) => {
     set(produce<RFState>(draft => {
       // 直接更新或添加新的chipData项
-      if (!draft.chipData.hasOwnProperty(chipId) || draft.chipData[chipId] !== chipData) {
+      if (!Object.hasOwn(draft.chipData, chipId) || draft.chipData[chipId] !== chipData) {
         draft.chipData[chipId] = chipData;
       }
     }));
@@ -152,7 +152,7 @@ const useDataStore = createWithEqualityFn<RFState>((set, get) => ({
   deleteChipData: (chipId: string) => {
     set(produce<RFState>(draft => {
       // 检查是否存在要删除的chipId，存在则删除
-      if (draft.chipData.hasOwnProperty(chipId)) {
+      if (Object.hasOwn(draft.chipData, chipId)) {
         delete draft.chipData[chipId];
       }
     }));

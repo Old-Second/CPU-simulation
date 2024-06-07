@@ -1,79 +1,80 @@
 import './index.css';
 import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
-import useDataStore from "../../store/useDataStore.ts";
+import useDataStore from "../../../store/useDataStore.ts";
 import React, {useEffect, useState} from "react";
 import {Form, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
-import {selector} from "../../utils/selector.ts";
+import {selector} from "../../../utils/selector.ts";
 
-const Not = () => {
+const Or = () => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
-  const [notInput, setNotInput] = useState(0);
-  const [notData, setNotData] = useState({
-    label: "Not",
+  const [orInput, setOrInput] = useState<number[][]>([[0], [0]]);
+  const [orData, setOrData] = useState({
+    label: "OR",
     rotation: 0,
   });
   
   useEffect(() => {
-    setNotData((getChipData(nodeId) ?? getChipData('not')) as { label: string, rotation: number });
+    setOrData((getChipData(nodeId) ?? getChipData('or')) as { label: string, rotation: number });
   }, [chipData, getChipData, nodeId]);
   useEffect(() => {
     updateNodeInternals(nodeId);
-  }, [notData, nodeId, updateNodeInternals]);
+  }, [orData, nodeId, updateNodeInternals]);
   
   // 当数据或节点 ID 更改时更新
   useEffect(() => {
-      setNotInput(getData(nodeId, 'in'))
+      const input1 = (getData(nodeId, 'in1')?.toString(2) ?? '').padStart(32, '0').split('').map(Number);
+      const input2 = (getData(nodeId, 'in2')?.toString(2) ?? '').padStart(32, '0').split('').map(Number);
+      setOrInput([input1, input2]);
     }, [data, getData, nodeId]
   );
   
   // 更新输出
   useEffect(() => {
-    const invertedInput = parseInt(notInput.toString(2).split('').map(bit => bit === '0' ? '1' : '0').join(''), 2);
-    updateData(nodeId, 'out', invertedInput);
-  }, [edges, notInput, nodeId, updateData]);
+    const output = orInput[0].map((bit, index) => (bit || orInput[1][index]) ? 1 : 0);
+    updateData(nodeId, 'out', parseInt(output.join(''), 2));
+  }, [edges, orInput, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
-  const openEditNot = () => setOpen(true);
-  const closeEditNot = () => setOpen(false);
+  const openEditOr = () => setOpen(true);
+  const closeEditOr = () => setOpen(false);
   
   
   // 处理表单提交
   const handleSubmit = (values: { label: string; rotation: number; }) => {
-    setNotData({...values, label: 'Not'});
-    updateChipData(nodeId, {...values, label: 'Not'});
+    setOrData({...values, label: 'Or'});
+    updateChipData(nodeId, {...values, label: 'Or'});
     updateNodeInternals(nodeId);
     void message.success('配置成功');
-    closeEditNot();
+    closeEditOr();
   };
   
   return (
     <>
-      <h3>{notData.label}</h3>
-      <div className="not" style={{transform: `rotate(${-notData.rotation}deg)`}}>
+      <h3>{orData.label}</h3>
+      <div className="or" style={{transform: `rotate(${-orData.rotation}deg)`}}>
+        <p className={'or-≥1'}>≥1</p>
         
         <NodeToolbar offset={0}>
-          <EditOutlined onClick={openEditNot}/>
-          <NotModal open={open} closeEditNot={closeEditNot} initialValues={notData} onSubmit={handleSubmit}/>
+          <EditOutlined onClick={openEditOr}/>
+          <OrModal open={open} closeEditOr={closeEditOr} initialValues={orData} onSubmit={handleSubmit}/>
         </NodeToolbar>
-        <div className='not-square'>
-          <Handle type='target' id="in" position={Position.Left}/>
-        </div>
-        <div className="not-circle">
-          <Handle type='source' id="out" position={Position.Right}/>
-        </div>
+        
+        <Handle type='target' id="in1" position={Position.Left} style={{top: '33%'}}/>
+        <Handle type='target' id="in2" position={Position.Left} style={{top: '66%'}}/>
+        <Handle type='source' id="out" position={Position.Right}/>
       </div>
     </>
   );
 };
 
-export default Not;
+export default Or;
 
-interface NotModalProps {
+interface OrModalProps {
   open: boolean;
-  closeEditNot: () => void;
+  closeEditOr: () => void;
   initialValues: {
     label: string;
     rotation: number;
@@ -81,7 +82,7 @@ interface NotModalProps {
   onSubmit: (values: { label: string; rotation: number; }) => void;
 }
 
-const NotModal: React.FC<NotModalProps> = ({open, closeEditNot, initialValues, onSubmit}) => {
+const OrModal: React.FC<OrModalProps> = ({open, closeEditOr, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
   
   const handleOk = () => {
@@ -99,10 +100,10 @@ const NotModal: React.FC<NotModalProps> = ({open, closeEditNot, initialValues, o
       title={`${initialValues.label} 配置`}
       okText="确定"
       cancelText="取消"
-      onCancel={closeEditNot}
+      onCancel={closeEditOr}
       onOk={handleOk}
     >
-      <Form form={form} name="NotConfiguration" initialValues={initialValues}>
+      <Form form={form} name="OrConfiguration" initialValues={initialValues}>
         <Form.Item
           name="rotation" label="Rotation"
         >

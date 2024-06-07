@@ -1,8 +1,8 @@
 import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import React, {useEffect, useState} from "react";
-import useDataStore from "../../store/useDataStore.ts";
-import {selector} from "../../utils/selector.ts";
+import useDataStore from "../../../store/useDataStore.ts";
+import {selector} from "../../../utils/selector.ts";
 import {Form, Input, message, Modal} from "antd";
 
 const Constant = () => {

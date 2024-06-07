@@ -1,74 +1,74 @@
 import './index.css';
 import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
-import useDataStore from "../../store/useDataStore.ts";
+import useDataStore from "../../../store/useDataStore.ts";
 import React, {useEffect, useState} from "react";
 import {Form, Input, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
-import {selector} from "../../utils/selector.ts";
+import {selector} from "../../../utils/selector.ts";
 
-const TunnelIn = () => {
+const TunnelOut = () => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
-  const [tunnelInInput, setTunnelInInput] = useState(0);
-  const [tunnelInData, setTunnelInData] = useState({
-    netName: "TunnelIn",
+  const [tunnelOutInput, setTunnelOutInput] = useState(0);
+  const [tunnelOutData, setTunnelOutData] = useState({
+    netName: "TunnelOut",
     rotation: 0,
   });
   
   useEffect(() => {
-    setTunnelInData((getChipData(nodeId) ?? getChipData('tunnelIn')) as { netName: string; rotation: number; });
+    setTunnelOutData((getChipData(nodeId) ?? getChipData('tunnelOut')) as { netName: string; rotation: number; });
   }, [chipData, getChipData, nodeId]);
   useEffect(() => {
     updateNodeInternals(nodeId);
-  }, [nodeId, tunnelInData, updateNodeInternals]);
+  }, [nodeId, tunnelOutData, updateNodeInternals]);
   
   // 当数据或节点 ID 更改时更新
   useEffect(() => {
-      setTunnelInInput(getData(nodeId, 'in'))
-    }, [data, getData, nodeId]
+      setTunnelOutInput(getData('TunnelOut', tunnelOutData.netName))
+    }, [data, getData, nodeId, tunnelOutData.netName]
   );
   
   // 更新输出
   useEffect(() => {
-    updateData('TunnelIn', tunnelInData.netName, tunnelInInput);
-  }, [edges, tunnelInInput, nodeId, updateData, tunnelInData.netName]);
+    updateData(nodeId, 'out', tunnelOutInput);
+  }, [edges, tunnelOutInput, nodeId, updateData]);
   
   const [open, setOpen] = useState(false);
-  const openEditTunnelIn = () => setOpen(true);
-  const closeEditTunnelIn = () => setOpen(false);
+  const openEditTunnelOut = () => setOpen(true);
+  const closeEditTunnelOut = () => setOpen(false);
   
   
   // 处理表单提交
   const handleSubmit = (values: { netName: string; rotation: number; }) => {
-    setTunnelInData({...values});
+    setTunnelOutData({...values});
     updateChipData(nodeId, values);
     updateNodeInternals(nodeId);
     void message.success('配置成功');
-    closeEditTunnelIn();
+    closeEditTunnelOut();
   };
   
   return (
     <>
-      <h3>{tunnelInData.netName}</h3>
-      <div className="tunnelIn" style={{transform: `rotate(${-tunnelInData.rotation}deg)`}}>
+      <h3>{tunnelOutData.netName}</h3>
+      <div className="tunnelOut" style={{transform: `rotate(${-tunnelOutData.rotation}deg)`}}>
         
         <NodeToolbar offset={0}>
-          <EditOutlined onClick={openEditTunnelIn}/>
-          <TunnelInModal open={open} closeEditTunnelIn={closeEditTunnelIn} initialValues={tunnelInData}
-                         onSubmit={handleSubmit}/>
+          <EditOutlined onClick={openEditTunnelOut}/>
+          <TunnelOutModal open={open} closeEditTunnelOut={closeEditTunnelOut} initialValues={tunnelOutData}
+                          onSubmit={handleSubmit}/>
         </NodeToolbar>
-        <Handle type='target' id="in" position={Position.Left} style={{left: '1px'}}/>
+        <Handle type='source' id="out" position={Position.Right} style={{right: '1px'}}/>
       </div>
     </>
   );
 };
 
-export default TunnelIn;
+export default TunnelOut;
 
-interface TunnelInModalProps {
+interface TunnelOutModalProps {
   open: boolean;
-  closeEditTunnelIn: () => void;
+  closeEditTunnelOut: () => void;
   initialValues: {
     netName: string;
     rotation: number;
@@ -76,7 +76,7 @@ interface TunnelInModalProps {
   onSubmit: (values: { netName: string; rotation: number; }) => void;
 }
 
-const TunnelInModal: React.FC<TunnelInModalProps> = ({open, closeEditTunnelIn, initialValues, onSubmit}) => {
+const TunnelOutModal: React.FC<TunnelOutModalProps> = ({open, closeEditTunnelOut, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
   
   const handleOk = () => {
@@ -94,10 +94,10 @@ const TunnelInModal: React.FC<TunnelInModalProps> = ({open, closeEditTunnelIn, i
       title={`${initialValues.netName} 配置`}
       okText="确定"
       cancelText="取消"
-      onCancel={closeEditTunnelIn}
+      onCancel={closeEditTunnelOut}
       onOk={handleOk}
     >
-      <Form form={form} name="TunnelInConfiguration" initialValues={initialValues}>
+      <Form form={form} name="TunnelOutConfiguration" initialValues={initialValues}>
         <Form.Item
           name="rotation" label="Rotation"
         >

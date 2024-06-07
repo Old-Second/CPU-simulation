@@ -1,10 +1,10 @@
 import './index.css'
 import {Handle, NodeToolbar, Position, useNodeId} from "reactflow";
-import useDataStore from "../../store/useDataStore.ts";
+import useDataStore from "../../../store/useDataStore.ts";
 import React, {useCallback, useEffect, useState} from "react";
 import {Form, Input, InputNumber, message, Modal, Table} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
-import {selector} from "../../utils/selector.ts";
+import {selector} from "../../../utils/selector.ts";
 
 const {Column} = Table;
 

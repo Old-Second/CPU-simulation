@@ -1,10 +1,10 @@
 import './index.css';
 import {Handle, NodeToolbar, Position, useNodeId, useUpdateNodeInternals} from "reactflow";
-import useDataStore from "../../store/useDataStore.ts";
+import useDataStore from "../../../store/useDataStore.ts";
 import React, {useEffect, useState} from "react";
 import {Form, Input, message, Modal} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
-import {selector} from "../../utils/selector.ts";
+import {selector} from "../../../utils/selector.ts";
 
 const Splitter = () => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);

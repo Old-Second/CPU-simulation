@@ -1,8 +1,8 @@
 import './index.css'
 import {Handle, Position, useNodeId} from "reactflow";
-import useDataStore from "../../store/useDataStore.ts";
+import useDataStore from "../../../store/useDataStore.ts";
 import {useEffect, useState} from "react";
-import {selector} from "../../utils/selector.ts";
+import {selector} from "../../../utils/selector.ts";
 
 
 const DigitalTube = () => {

@@ -139,6 +139,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
         }
       );
     }
+    console.log(newData)
     setDataSource(newData);
   }, [initialValues.dataBits, initialValues.dataSource]);
   
@@ -151,8 +152,8 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
     form
       .validateFields()
       .then((values) => {
-        const decimalDataSource = dataSource.reduce((acc, item) => {
-          acc[item.address] = parseInt(item.value, 16);
+        const decimalDataSource = dataSource.reduce((acc, item, index) => {
+          acc[index] = parseInt(item.value, 16);
           return acc;
         }, {} as { [address: string]: number });
         onSubmit({...values, dataSource: decimalDataSource});

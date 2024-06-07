@@ -44,7 +44,7 @@ const Demultiplexer = () => {
   useEffect(() => {
     const {input, sel} = demultiplexerInput;
     // const out = input[sel];
-    updateData(nodeId, `out${sel}`, input)
+    updateData(nodeId, `out-${sel}`, input)
     // updateData(nodeId, 'out', out);
   }, [edges, demultiplexerInput, demultiplexerData.dataBits, nodeId, updateData]);
   

@@ -36,7 +36,7 @@ const Multiplexer = () => {
   useEffect(() => {
       setMultiplexerInput({
         input: Array.from({length: Math.pow(2, multiplexerData.numberOfSelectorBits)}, (_, index) =>
-          getData(nodeId, `input${index}`)
+          getData(nodeId, `input-${index}`)
         ),
         sel: getData(nodeId, 'sel')
       })

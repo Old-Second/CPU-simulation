@@ -43,10 +43,16 @@ const Demultiplexer = () => {
   
   useEffect(() => {
     const {input, sel} = demultiplexerInput;
-    // const out = input[sel];
-    updateData(nodeId, `out-${sel}`, input)
-    // updateData(nodeId, 'out', out);
-  }, [edges, demultiplexerInput, demultiplexerData.dataBits, nodeId, updateData]);
+    const totalOutputs = Math.pow(2, demultiplexerData.numberOfSelectorBits);
+    for (let i = 0; i < totalOutputs; i++) {
+      // 根据条件更新端口数据
+      if (i === sel) {
+        updateData(nodeId, `out-${i}`, input); // 对于选定的端口i，更新数据为input
+      } else {
+        updateData(nodeId, `out-${i}`, 0); // 其他所有端口设置为0
+      }
+    }
+  }, [edges, demultiplexerInput, demultiplexerData.dataBits, nodeId, updateData, demultiplexerData.numberOfSelectorBits]);
   
   const [open, setOpen] = useState(false);
   const openEditDemultiplexer = () => setOpen(true);

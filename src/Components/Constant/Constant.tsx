@@ -31,7 +31,7 @@ const Constant = () => {
   const handleSubmit = (values: { label: string; value: string; }) => {
     const parsedValue = parseInt(values.value, 16);
     setConstantData({...values, label: 'Constant', value: parsedValue});
-    updateChipData(nodeId, {...values, value: parsedValue});
+    updateChipData(nodeId, {...values, label: 'Constant', value: parsedValue});
     void message.success('配置成功');
     closeEditConstant();
   };
@@ -65,11 +65,31 @@ interface ConstantModalProps {
 
 const ConstantModal: React.FC<ConstantModalProps> = ({open, closeEditConstant, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
+  const [inputValue, setInputValue] = useState(String(initialValues.value));
+  
+  useEffect(() => {
+    setInputValue(String(initialValues.value));
+  }, [initialValues.value]);
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    if (!value.startsWith('0x')) {
+      value = `0x${value}`;
+    }
+    setInputValue(value);
+    form.setFieldsValue({value});
+  };
   
   const handleOk = () => {
     form
       .validateFields()
-      .then(onSubmit)
+      .then((values) => {
+        const modifiedValues = {
+          ...values,
+          value: values.value.startsWith('0x') ? values.value : `0x${values.value}`,
+        };
+        onSubmit(modifiedValues);
+      })
       .catch((info) => {
         console.log('Validate Failed:', info);
       });
@@ -84,18 +104,18 @@ const ConstantModal: React.FC<ConstantModalProps> = ({open, closeEditConstant, i
       onCancel={closeEditConstant}
       onOk={handleOk}
     >
-      <Form form={form} name="ConstantConfiguration" initialValues={initialValues}>
+      <Form form={form} name="ConstantConfiguration" initialValues={{...initialValues, value: inputValue}}>
         <Form.Item
           name="value" label="Value"
           rules={[
             {required: true, message: '请输入数据!'},
             {
-              pattern: /^[0-9a-fA-F]+$/,
-              message: '请输入有效的十六进制字符串!',
+              pattern: /^(0x|0X)?[0-9a-fA-F]+$/,
+              message: '请输入有效的十六进制数字!',
             },
           ]}
         >
-          <Input/>
+          <Input placeholder="请输入十六进制数字" onChange={handleInputChange}/>
         </Form.Item>
       </Form>
     </Modal>

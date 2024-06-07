@@ -36,7 +36,7 @@ const Adder = () => {
     
     const binA = (a?.toString() ?? '').padStart(adderData.dataBits, '0');
     const binB = (b?.toString() ?? '').padStart(adderData.dataBits, '0');
-    
+    console.log(binA, binB)
     for (let i = adderData.dataBits - 1; i >= 0; i--) {
       const digitA = parseInt(binA[i], 2);
       const digitB = parseInt(binB[i], 2);
@@ -75,7 +75,7 @@ const Adder = () => {
         <p className={'adder-port adder-b'}>B</p>
         <p className={'adder-port adder-c_i'}>C<sub>i</sub></p>
         <p className={'adder-port adder-s'}>S</p>
-        <p className={'adder-port adder-c_o'}>C<sub>0</sub></p>
+        <p className={'adder-port adder-c_o'}>C<sub>o</sub></p>
         
         <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditAdder}/>
@@ -86,7 +86,7 @@ const Adder = () => {
         <Handle type='target' id="b" position={Position.Left} style={{top: '50%'}}/>
         <Handle type='target' id="c_i" position={Position.Left} style={{top: '80%'}}/>
         <Handle type='source' id="s" position={Position.Right} style={{top: '20%'}}/>
-        <Handle type='source' id="c_0" position={Position.Right} style={{top: '50%'}}/>
+        <Handle type='source' id="c_o" position={Position.Right} style={{top: '50%'}}/>
       </div>
     </>
   );

@@ -139,7 +139,6 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
         }
       );
     }
-    console.log(newData)
     setDataSource(newData);
   }, [initialValues.dataBits, initialValues.dataSource]);
   

@@ -36,7 +36,7 @@ const Adder = () => {
     
     const binA = (a?.toString() ?? '').padStart(adderData.dataBits, '0');
     const binB = (b?.toString() ?? '').padStart(adderData.dataBits, '0');
-    console.log(binA, binB)
+    
     for (let i = adderData.dataBits - 1; i >= 0; i--) {
       const digitA = parseInt(binA[i], 2);
       const digitB = parseInt(binB[i], 2);

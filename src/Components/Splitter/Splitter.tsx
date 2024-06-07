@@ -51,7 +51,7 @@ const Splitter = () => {
   useEffect(() => {
     // 获取输入端口数据
     setSplitterInput(Array.from({length: splitterData.InputSplitting.split(',').length}, (_, index) =>
-      getData(nodeId, `input-${inPort[index]}`)
+      getData(nodeId, `input-${index}`)
     ).join(''))
   }, [data, splitterData.InputSplitting, nodeId, inPort, getData]);
   
@@ -63,9 +63,9 @@ const Splitter = () => {
     // 更新输出数据
     outputLengths.forEach((length, i) => {
       const outputBinary = splitterInput.slice(currentIndex, currentIndex + length);
-      const output = parseInt(outputBinary);
+      const output = parseInt(outputBinary, 2);
       currentIndex += length;
-      updateData(nodeId, `out-${outPort[i]}`, output);
+      updateData(nodeId, `output-${i}`, output);
     });
   }, [edges, splitterInput, splitterData.OutputSplitting, nodeId, updateData, outPort]);
   

@@ -43,7 +43,7 @@ const Ram = () => {
   // 当数据源更改时更新 D
   useEffect(() => {
     const {A, ld} = ramInput;
-    if (ld === 1 && DOut[A]) {
+    if (ld === 1) {
       updateData(nodeId, 'D', DOut[A]);
     }
   }, [edges, ramInput, nodeId, ramData, updateData, DOut]);

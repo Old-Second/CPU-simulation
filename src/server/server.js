@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import dbPool from './db.js';
+import {getDbPool} from './db.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -29,7 +29,7 @@ app.use(cors({
 app.post('/login', (req, res) => {
   const {username, userId} = req.body;
   const query = 'INSERT INTO users (username, userId, loginTime, leaveTime) VALUES (?, ?, ?, ?)';
-  dbPool.query(query, [username, userId, new Date(), new Date()], (err) => {
+  getDbPool().query(query, [username, userId, new Date(), new Date()], (err) => {
     if (err) {
       console.error('记录登录时间时出错:', err);
       res.status(500).send('服务器错误');
@@ -43,7 +43,7 @@ app.post('/login', (req, res) => {
 app.post('/heartbeat', (req, res) => {
   const {userId} = req.body;
   const query = 'UPDATE users SET leaveTime = ? WHERE userId = ?';
-  dbPool.query(query, [new Date(), userId], (err) => {
+  getDbPool().query(query, [new Date(), userId], (err) => {
     if (err) {
       console.error('心跳检测时出错:', err);
       res.status(500).send('服务器错误');

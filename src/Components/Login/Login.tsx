@@ -35,7 +35,7 @@ const Login = () => {
       userId: values.userId,
     });
     try {
-      await axios.post('/api/login', {
+      await axios.post(import.meta.env.VITE_API_BASE_URL + '/api/login', {
         username: values.username,
         userId: values.userId,
       });
@@ -49,7 +49,7 @@ const Login = () => {
   
   const sendHeartbeat = useCallback(async () => {
     try {
-      await axios.post('/api/heartbeat', {
+      await axios.post(import.meta.env.VITE_API_BASE_URL + '/api/heartbeat', {
         userId: user.userId,
       });
       console.log('心跳信号已更新');

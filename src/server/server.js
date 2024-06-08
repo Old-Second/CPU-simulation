@@ -10,6 +10,9 @@ dotenv.config({path: '.env.local'});
 // 设置Express应用程序
 const app = express();
 app.use(bodyParser.json());
+app.use('/api', (req, res, next) => {
+  next();
+});
 
 // 配置CORS以允许特定域名
 const allowedOrigins = process.env.ALLOWED_ORIGINS;
@@ -26,7 +29,7 @@ app.use(cors({
 }));
 
 // 接收登录时间
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   const {username, userId} = req.body;
   const query = 'INSERT INTO users (username, userId, loginTime, leaveTime) VALUES (?, ?, ?, ?)';
   getDbPool().query(query, [username, userId, new Date(), new Date()], (err) => {
@@ -40,7 +43,7 @@ app.post('/login', (req, res) => {
 });
 
 // 设置心跳检测
-app.post('/heartbeat', (req, res) => {
+app.post('/api/heartbeat', (req, res) => {
   const {userId} = req.body;
   const query = 'UPDATE users SET leaveTime = ? WHERE userId = ?';
   getDbPool().query(query, [new Date(), userId], (err) => {

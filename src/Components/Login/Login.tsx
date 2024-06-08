@@ -29,7 +29,6 @@ const Login = () => {
   const heartbeatInterval = useRef<number | null>(null)
   
   const onSubmit = async (values: { username: string; userId: string; }) => {
-    console.log(values);
     setUser({
       username: values.username,
       userId: values.userId,

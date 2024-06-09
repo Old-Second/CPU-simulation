@@ -74,7 +74,7 @@ app.post('/api/heartbeat', (req, res) => {
           return;
         }
 
-        if (updateResult.affectedRows > 0) { // 修改这里，使用updateResult而非updateErr
+        if (updateResult.affectedRows > 0) {
           res.status(200).send('心跳信号已更新');
         } else {
           // 如果没有记录被更新，可能是因为没有找到对应的登录记录

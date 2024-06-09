@@ -4,6 +4,7 @@ import Sidebar from "./Components/Sidebar/Sidebar.tsx";
 import {Layout} from "antd";
 import {ReactFlowProvider} from "reactflow";
 import Login from "./Components/Login/Login.tsx";
+import About from "./Components/About/About.tsx";
 
 const {Content} = Layout;
 
@@ -18,6 +19,7 @@ function App() {
           <CircuitDiagram/>
         </ReactFlowProvider>
       </Content>
+      <About/>
       <Login/>
     </Layout>
   )

@@ -8,13 +8,15 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "node src/server/server.js"
+    "server": "node src/server/server.js",
+    "start": "concurrently \"npm run server\" \"npm run preview\""
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.0",
     "antd": "^5.14.1",
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",
+    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

@@ -125,7 +125,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
       address: i > 9 ? `0x${i.toString(16).toUpperCase()}` : i.toString(),
       value: '0',
     }));
-    if (initialValues.dataSource[0]) {
+    if (initialValues.dataSource[0] != undefined) {
       Array.from({length: rowCount}, (_, i) => {
           const newValue = initialValues.dataSource[i]?.toString() ?? '';
           const maxHexValue = Math.pow(2, initialValues.dataBits) - 1;

@@ -9,7 +9,7 @@ import {selector} from "../../../utils/selector.ts";
 const Adder = () => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
-  const [adderInput, setAdderInput] = useState({a: 0, b: 0, c_i: 0});
+  const [adderInput, setAdderInput] = useState({a: '0', b: '0', c_i: 0});
   const [adderData, setAdderData] = useState({
     label: "Adder",
     dataBits: 1
@@ -22,8 +22,8 @@ const Adder = () => {
   // 当数据或节点 ID 更改时更新 a, b, 和 c_i
   useEffect(() => {
       setAdderInput({
-        a: getData(nodeId, 'a'),
-        b: getData(nodeId, 'b'),
+        a: getData(nodeId, 'a')?.toString(2) ?? '',
+        b: getData(nodeId, 'b')?.toString(2) ?? '',
         c_i: getData(nodeId, 'c_i')
       })
     }, [data, getData, nodeId]
@@ -49,7 +49,7 @@ const Adder = () => {
       co = ((digitA & digitB) | (digitA & co) | (digitB & co));
     }
     
-    updateData(nodeId, 's', parseInt(sum));
+    updateData(nodeId, 's', parseInt(sum, 2));
     updateData(nodeId, 'c_o', co);
   }, [edges, adderInput, adderData.dataBits, nodeId, updateData]);
   

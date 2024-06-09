@@ -47,7 +47,10 @@ const Demultiplexer = () => {
     for (let i = 0; i < totalOutputs; i++) {
       // 根据条件更新端口数据
       if (i === sel) {
-        updateData(nodeId, `out-${i}`, input); // 对于选定的端口i，更新数据为input
+        const outBinaryString = (input?.toString(2) ?? '');
+        // 直接截取后dataBits位
+        const out = parseInt(outBinaryString.slice(-demultiplexerData.dataBits), 2);
+        updateData(nodeId, `out-${i}`, out); // 对于选定的端口i，更新数据为input
       } else {
         updateData(nodeId, `out-${i}`, 0); // 其他所有端口设置为0
       }

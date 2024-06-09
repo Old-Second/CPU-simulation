@@ -45,7 +45,9 @@ const Multiplexer = () => {
   
   useEffect(() => {
     const {input, sel} = multiplexerInput;
-    const out = input[sel];
+    const outBinaryString = (input[sel]?.toString(2) ?? '');
+    // 直接截取后dataBits位
+    const out = parseInt(outBinaryString.slice(-multiplexerData.dataBits), 2);
     updateData(nodeId, 'out', out);
   }, [edges, multiplexerInput, multiplexerData.dataBits, nodeId, updateData]);
   

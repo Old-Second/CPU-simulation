@@ -6,7 +6,7 @@ export default defineConfig(({mode}) => {
   const env = loadEnv(mode, process.cwd())
   return {
     plugins: [react()],
-    base: '/CPU-simulation/',
+    // base: '/CPU-simulation/',
     server: {
       proxy: {
         '/api': {

@@ -50,8 +50,14 @@ const Splitter = () => {
   
   useEffect(() => {
     // 获取输入端口数据
-    setSplitterInput(Array.from({length: splitterData.InputSplitting.split(',').length}, (_, index) =>
-      getData(nodeId, `input-${index}`)
+    setSplitterInput(Array.from({length: splitterData.InputSplitting.split(',').length}, (_, index) => {
+        let input = getData(nodeId, `input-${index}`)?.toString(2) ?? ''
+        const inputLength = splitterData.InputSplitting.split(',').map(Number)[index]
+        if (input.length < inputLength) {
+          input = '0'.repeat(inputLength - input.length) + input
+        }
+        return input.slice(-splitterData.InputSplitting.split(',').map(Number)[index])
+      }
     ).join(''))
   }, [data, splitterData.InputSplitting, nodeId, inPort, getData]);
   

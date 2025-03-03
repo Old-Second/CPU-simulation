@@ -83,16 +83,20 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
-      - name: Download artifacts
+      - name: Download main artifact
         uses: actions/download-artifact@v4
         with:
-          name: main
+          name: main-branch
           path: dist
-      - name: Download digitalTube artifacts
+      - name: Download digitalTube artifact
         uses: actions/download-artifact@v4
         with:
           name: digitalTube-branch
           path: dist/digitalTube
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

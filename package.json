@@ -12,35 +12,36 @@
     "start": "concurrently \"npm run server\" \"npm run preview\""
   },
   "dependencies": {
-    "@ant-design/icons": "^5.3.0",
-    "antd": "^5.14.1",
-    "axios": "^1.7.2",
-    "body-parser": "^1.20.2",
-    "concurrently": "^8.2.2",
+    "@ant-design/icons": "^5.6.1",
+    "antd": "^5.24.2",
+    "axios": "^1.8.1",
+    "body-parser": "^1.20.3",
+    "concurrently": "^9.1.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "dotenv": "^16.4.7",
+    "express": "^5.0.1",
     "file-saver": "^2.0.5",
     "immer": "^10.1.1",
-    "mysql2": "^3.10.0",
-    "nanoid": "^5.0.6",
+    "mysql2": "^3.12.0",
+    "nanoid": "^5.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "reactflow": "^11.10.3",
-    "zustand": "^4.5.1"
+    "reactflow": "^11.11.4",
+    "zustand": "^4.5.6"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "@vitejs/plugin-react-swc": "^3.7.0",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8"
-  }
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react-swc": "^3.8.0",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "typescript": "5.7.3",
+    "vite": "^6.2.0"
+  },
+  "packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab"
 }

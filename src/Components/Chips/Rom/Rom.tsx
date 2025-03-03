@@ -9,7 +9,7 @@ import {selector} from "../../../utils/selector.ts";
 const {Column} = Table;
 
 
-const Rom = () => {
+const Rom = ({preview = false}: { preview?: boolean }) => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [romInput, setRomInput] = useState({A: 0, sel: 0});
@@ -19,7 +19,7 @@ const Rom = () => {
     label: string,
     dataSource: { [address: string]: number; }
   }>({addressBits: 1, dataBits: 1, label: "ROM", dataSource: {}});
-  
+
   useEffect(() => {
     setRomData((getChipData(nodeId) ?? getChipData('rom')) as {
       dataBits: number;
@@ -28,7 +28,7 @@ const Rom = () => {
       dataSource: { [address: string]: number; }
     });
   }, [chipData, getChipData, nodeId]);
-  
+
   // 当数据或节点 ID 更改时更新 A 和 sel
   useEffect(() => {
     setRomInput({
@@ -36,7 +36,7 @@ const Rom = () => {
       sel: getData(nodeId, 'sel')
     })
   }, [data, getData, nodeId]);
-  
+
   // 当 A 或数据源更改时更新 D
   useEffect(() => {
     const {A, sel} = romInput;
@@ -44,11 +44,11 @@ const Rom = () => {
       updateData(nodeId, 'D', romData.dataSource[A])
     }
   }, [edges, romInput, nodeId, romData, updateData]);
-  
+
   const [open, setOpen] = useState(false);
   const openEditRom = () => setOpen(true);
   const closeEditRom = () => setOpen(false);
-  
+
   // 处理表单提交
   const handleSubmit = (data: {
     dataBits: number;
@@ -61,7 +61,17 @@ const Rom = () => {
     void message.success('配置成功');
     closeEditRom();
   }
-  
+
+  if (preview) {
+    return (
+      <div className="rom">
+        <p className={'rom-port rom-A'}>A</p>
+        <p className={'rom-port rom-sel'}>sel</p>
+        <p className={'rom-port rom-D'}>D</p>
+      </div>
+    )
+  }
+
   return (
     <>
       <h3>{romData.label}</h3>
@@ -70,12 +80,12 @@ const Rom = () => {
         <p className={'rom-port rom-A'}>A</p>
         <p className={'rom-port rom-sel'}>sel</p>
         <p className={'rom-port rom-D'}>D</p>
-        
+
         <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditRom}/>
           <RomModal open={open} closeEditRom={closeEditRom} onSubmit={handleSubmit} initialValues={romData}/>
         </NodeToolbar>
-        
+
         <Handle type='target' id="A" position={Position.Left} style={{top: '33%'}}/>
         <Handle type='target' id="sel" position={Position.Left} style={{top: '66%'}}/>
         <Handle type='source' id="D" position={Position.Right}/>
@@ -116,7 +126,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
       value: value.toString()
     }))
   );
-  
+
   // 生成数据源
   const generateDataSource = useCallback((addressBits: number) => {
     const rowCount = Math.pow(2, addressBits);
@@ -141,11 +151,11 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
     }
     setDataSource(newData);
   }, [initialValues.dataBits, initialValues.dataSource]);
-  
+
   useEffect(() => {
     generateDataSource(initialValues.addressBits);
   }, [generateDataSource, initialValues.addressBits]);
-  
+
   // 处理表单提交
   const handleOk = () => {
     form
@@ -161,7 +171,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
         console.log('Validate Failed:', info);
       });
   };
-  
+
   const inputDataSource = useCallback((newValue: string, index: number) => {
     const newData = [...dataSource];
     const maxHexValue = Math.pow(2, dataBits) - 1;
@@ -175,7 +185,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
     }
     setDataSource(newData);
   }, [dataBits, dataSource])
-  
+
   return (
     <Modal
       open={open}

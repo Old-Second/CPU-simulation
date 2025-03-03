@@ -6,7 +6,7 @@ import {Form, Input, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../../utils/selector.ts";
 
-const TunnelIn = () => {
+const TunnelIn = ({preview = false}: { preview?: boolean }) => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
@@ -15,30 +15,30 @@ const TunnelIn = () => {
     netName: "TunnelIn",
     rotation: 0,
   });
-  
+
   useEffect(() => {
     setTunnelInData((getChipData(nodeId) ?? getChipData('tunnelIn')) as { netName: string; rotation: number; });
   }, [chipData, getChipData, nodeId]);
   useEffect(() => {
     updateNodeInternals(nodeId);
   }, [nodeId, tunnelInData, updateNodeInternals]);
-  
+
   // 当数据或节点 ID 更改时更新
   useEffect(() => {
       setTunnelInInput(getData(nodeId, 'in'))
     }, [data, getData, nodeId]
   );
-  
+
   // 更新输出
   useEffect(() => {
     updateData('TunnelIn', tunnelInData.netName, tunnelInInput);
   }, [edges, tunnelInInput, nodeId, updateData, tunnelInData.netName]);
-  
+
   const [open, setOpen] = useState(false);
   const openEditTunnelIn = () => setOpen(true);
   const closeEditTunnelIn = () => setOpen(false);
-  
-  
+
+
   // 处理表单提交
   const handleSubmit = (values: { netName: string; rotation: number; }) => {
     setTunnelInData({...values});
@@ -47,12 +47,18 @@ const TunnelIn = () => {
     void message.success('配置成功');
     closeEditTunnelIn();
   };
-  
+
+  if (preview) {
+    return (
+      <div className="tunnelIn" style={{transform: `rotate(${-tunnelInData.rotation}deg)`}}></div>
+    )
+  }
+
   return (
     <>
       <h3>{tunnelInData.netName}</h3>
       <div className="tunnelIn" style={{transform: `rotate(${-tunnelInData.rotation}deg)`}}>
-        
+
         <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditTunnelIn}/>
           <TunnelInModal open={open} closeEditTunnelIn={closeEditTunnelIn} initialValues={tunnelInData}
@@ -78,7 +84,7 @@ interface TunnelInModalProps {
 
 const TunnelInModal: React.FC<TunnelInModalProps> = ({open, closeEditTunnelIn, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
-  
+
   const handleOk = () => {
     form
       .validateFields()
@@ -87,7 +93,7 @@ const TunnelInModal: React.FC<TunnelInModalProps> = ({open, closeEditTunnelIn, i
         console.log('Validate Failed:', info);
       });
   };
-  
+
   return (
     <Modal
       open={open}

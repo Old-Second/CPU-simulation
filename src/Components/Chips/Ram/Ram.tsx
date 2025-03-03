@@ -9,7 +9,7 @@ import {selector} from "../../../utils/selector.ts";
 const {Column} = Table;
 
 
-const Ram = () => {
+const Ram = ({preview = false}: { preview?: boolean }) => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [ramInput, setRamInput] = useState({A: 0, Din: 0, str: 0, C: 0, ld: 0});
@@ -19,27 +19,37 @@ const Ram = () => {
     label: string,
   }>({addressBits: 1, dataBits: 1, label: "RAM"});
   const [DOut, setDOut] = useState<{ [address: string]: number; }>({0: 0});
-  
+
   const prevRamInput = useRef(ramInput);
-  
+
   useEffect(() => {
     setRamData((getChipData(nodeId) ?? getChipData('ram')) as { label: string, addressBits: number, dataBits: number });
   }, [chipData, getChipData, nodeId]);
-  
+
   // 当数据或节点 ID 更改时更新数据
   useEffect(() => {
     const A = getData(nodeId, 'A');
     const str = getData(nodeId, 'str');
     const C = getData(nodeId, 'C');
     const Din = getData(nodeId, 'Din');
-    setRamInput({A, Din, str, C, ld: getData(nodeId, 'ld')});
+    const ld = getData(nodeId, 'ld');
+    // 只有当值实际变化时才更新状态
+    if (
+      A !== prevRamInput.current.A ||
+      str !== prevRamInput.current.str ||
+      C !== prevRamInput.current.C ||
+      Din !== prevRamInput.current.Din ||
+      ld !== prevRamInput.current.ld
+    ) {
+      setRamInput({A, Din, str, C, ld})
+    }
     // 如果满足条件，则更新 DOut
     if (prevRamInput.current.str === 1 && str === 1 && prevRamInput.current.C === 0 && C === 1) {
       setDOut(prevState => ({...prevState, [A]: Din}));
     }
     prevRamInput.current = ramInput;
   }, [data, getData, nodeId, ramInput]);
-  
+
   // 当数据源更改时更新 D
   useEffect(() => {
     const {A, ld} = ramInput;
@@ -47,11 +57,11 @@ const Ram = () => {
       updateData(nodeId, 'D', DOut[A]);
     }
   }, [edges, ramInput, nodeId, ramData, updateData, DOut]);
-  
+
   const [open, setOpen] = useState(false);
   const openEditRam = () => setOpen(true);
   const closeEditRam = () => setOpen(false);
-  
+
   // 处理表单提交
   const handleSubmit = (data: {
     dataBits: number;
@@ -63,7 +73,21 @@ const Ram = () => {
     void message.success('配置成功');
     closeEditRam();
   }
-  
+
+  if (preview) {
+    return (
+      <div className="ram">
+        {/* 节点端口 */}
+        <p className={'ram-port ram-A'}>A</p>
+        <p className={'ram-port ram-Din'}>Din</p>
+        <p className={'ram-port ram-str'}>str</p>
+        <p className={'ram-port ram-C'}>C</p>
+        <p className={'ram-port ram-ld'}>ld</p>
+        <p className={'ram-port ram-D'}>D</p>
+      </div>
+    )
+  }
+
   return (
     <>
       <h3>{ramData.label}</h3>
@@ -75,13 +99,13 @@ const Ram = () => {
         <p className={'ram-port ram-C'}>C</p>
         <p className={'ram-port ram-ld'}>ld</p>
         <p className={'ram-port ram-D'}>D</p>
-        
+
         <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditRam}/>
           <RamModal open={open} closeEditRam={closeEditRam} DOut={DOut}
                     onSubmit={handleSubmit} initialValues={ramData}/>
         </NodeToolbar>
-        
+
         <Handle type='target' id="A" position={Position.Left} style={{top: '10%'}}/>
         <Handle type='target' id="Din" position={Position.Left} style={{top: '30%'}}/>
         <Handle type='target' id="str" position={Position.Left} style={{top: '50%'}}/>
@@ -117,21 +141,21 @@ const RamModal: React.FC<RamModalProps> = ({
   const [form] = Form.useForm();
   const [dataBits, setDataBits] = useState<number>(initialValues.dataBits);
   const [addressBits, setAddressBits] = useState<number>(initialValues.addressBits);
-  
+
   // 生成数据源
   const generateDataSource = useCallback((addressBits: number) => {
     const rowCount = Math.pow(2, addressBits);
     return Array.from({length: rowCount}, (_, i) => {
       const address = i > 9 ? `0x${i.toString(16).toUpperCase()}` : i.toString();
       let value: string;
-      
+
       if (DOut[i]) {
         const binaryStr = String(DOut[i]);
         const slicedBinary = binaryStr.slice(-dataBits);
         const intValue = parseInt(slicedBinary, 2);
         value = intValue > 9 ? `0x${intValue.toString(16).toUpperCase()}` : String(intValue);
       } else value = '0'
-      
+
       return {
         key: i,
         address,
@@ -139,10 +163,10 @@ const RamModal: React.FC<RamModalProps> = ({
       };
     });
   }, [DOut, dataBits]);
-  
+
   // 使用 useMemo 缓存数据源
   const dataSource = useMemo(() => generateDataSource(addressBits), [generateDataSource, addressBits]);
-  
+
   // 处理表单提交
   const handleOk = () => {
     form
@@ -152,7 +176,7 @@ const RamModal: React.FC<RamModalProps> = ({
         console.log('Validate Failed:', info);
       });
   };
-  
+
   return (
     <Modal
       open={open}

@@ -10,15 +10,17 @@ const {Content} = Layout;
 
 
 function App() {
-  
+
   return (
     <Layout>
-      <Sidebar/>
-      <Content>
-        <ReactFlowProvider>
+      <ReactFlowProvider>
+        <Sidebar/>
+        <Content>
+          {/*<ReactFlowProvider>*/}
           <CircuitDiagram/>
-        </ReactFlowProvider>
-      </Content>
+          {/*</ReactFlowProvider>*/}
+        </Content>
+      </ReactFlowProvider>
       <About/>
       <Login/>
     </Layout>

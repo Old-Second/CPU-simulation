@@ -5,15 +5,15 @@ import {useEffect, useState} from "react";
 import {selector} from "../../../utils/selector.ts";
 
 
-const DigitalTube = () => {
+const DigitalTube = ({preview = false}: { preview?: boolean }) => {
   const {data, getData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [value, setValue] = useState(0);
-  
+
   useEffect(() => {
     setValue(getData(nodeId, '111'))
   }, [data, getData, nodeId]);
-  
+
   // 定义每个数字的数码管段
   const segments = [
     [1, 1, 1, 0, 1, 1, 1], // 0
@@ -27,8 +27,8 @@ const DigitalTube = () => {
     [1, 1, 1, 1, 1, 1, 1], // 8
     [1, 1, 0, 1, 1, 1, 1], // 9
   ];
-  
-  
+
+
   // 根据传入的值获取对应的数码管段定义
   const getSegment = (val: number) => {
     if (val >= 0 && val <= 9) {
@@ -37,16 +37,24 @@ const DigitalTube = () => {
       return [0, 0, 0, 0, 0, 0, 0]; // 如果传入的值无效，则显示空白
     }
   };
-  
-  
+
+  if (preview) {
+    return (
+      <div className="seven-segment-display">
+        {getSegment(8).map((value, index) => ((value) ?
+          <div key={`${nodeId}-${index}`} className={`segment-${index} segment`}></div> : ''))}
+      </div>
+    )
+  }
+
   return (
     <div className="seven-segment-display">
       {getSegment(value).map((value, index) => ((value) ?
-        <div key={index} className={`segment-${index} segment`}></div> : ''))}
+        <div key={`${nodeId}-${index}`} className={`segment-${index} segment`}></div> : ''))}
       <Handle type='target' id="111" position={Position.Left}/>
     </div>
   );
-  
+
 }
 
 export default DigitalTube;

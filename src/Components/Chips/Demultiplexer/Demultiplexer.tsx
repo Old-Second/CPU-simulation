@@ -6,7 +6,7 @@ import {Form, InputNumber, Input, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../../utils/selector.ts";
 
-const Demultiplexer = () => {
+const Demultiplexer = ({preview = false}: { preview?: boolean }) => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
@@ -20,7 +20,7 @@ const Demultiplexer = () => {
     dataBits: 1,
     numberOfSelectorBits: 1
   });
-  
+
   useEffect(() => {
     setDemultiplexerData((getChipData(nodeId) ?? getChipData('demultiplexer')) as {
       label: string,
@@ -32,7 +32,7 @@ const Demultiplexer = () => {
   useEffect(() => {
     updateNodeInternals(nodeId);
   }, [demultiplexerData, nodeId, updateNodeInternals]);
-  
+
   useEffect(() => {
       setDemultiplexerInput({
         input: getData(nodeId, `input`),
@@ -40,7 +40,7 @@ const Demultiplexer = () => {
       })
     }, [data, demultiplexerData.numberOfSelectorBits, getData, nodeId]
   );
-  
+
   useEffect(() => {
     const {input, sel} = demultiplexerInput;
     const totalOutputs = Math.pow(2, demultiplexerData.numberOfSelectorBits);
@@ -56,11 +56,11 @@ const Demultiplexer = () => {
       }
     }
   }, [edges, demultiplexerInput, demultiplexerData.dataBits, nodeId, updateData, demultiplexerData.numberOfSelectorBits]);
-  
+
   const [open, setOpen] = useState(false);
   const openEditDemultiplexer = () => setOpen(true);
   const closeEditDemultiplexer = () => setOpen(false);
-  
+
   // 处理表单提交
   const handleSubmit = (values: {
     label: string;
@@ -74,7 +74,25 @@ const Demultiplexer = () => {
     void message.success('配置成功');
     closeEditDemultiplexer();
   };
-  
+
+  if (preview) {
+    return (
+      <div className="demultiplexer-container">
+        <div className={`demultiplexer ${nodeId}`} style={{
+          transform: `rotate(${-demultiplexerData.rotation}deg)`,
+          height: `${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) - 1) + 30 + 10}px`,
+        }}>
+          <style>
+            {`.${nodeId}::before { height: ${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) - 1) + 30}px; }`}
+          </style>
+
+          {/* 节点端口 */}
+          <p className={'demultiplexer-port demultiplexer-0'}>0</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="demultiplexer-container">
       <h3>{demultiplexerData.label}</h3>
@@ -85,17 +103,17 @@ const Demultiplexer = () => {
         <style>
           {`.${nodeId}::before { height: ${30 * (Math.pow(2, demultiplexerData.numberOfSelectorBits) - 1) + 30}px; }`}
         </style>
-        
+
         {/* 节点端口 */}
         <p className={'demultiplexer-port demultiplexer-0'}>0</p>
-        
+
         <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditDemultiplexer}/>
           <DemultiplexerModal open={open} closeEditDemultiplexer={closeEditDemultiplexer}
                               initialValues={demultiplexerData}
                               onSubmit={handleSubmit}/>
         </NodeToolbar>
-        
+
         {Array.from({length: Math.pow(2, demultiplexerData.numberOfSelectorBits)}, (_, i) => {
             const rightPosition = 30 * i;
             return <Handle key={`${nodeId}-out-${i}`} type='source' id={`out-${i}`} position={Position.Right}
@@ -130,7 +148,7 @@ const DemultiplexerModal: React.FC<DemultiplexerModalProps> = ({
                                                                  onSubmit
                                                                }) => {
   const [form] = Form.useForm();
-  
+
   const handleOk = () => {
     form
       .validateFields()
@@ -139,7 +157,7 @@ const DemultiplexerModal: React.FC<DemultiplexerModalProps> = ({
         console.log('Validate Failed:', info);
       });
   };
-  
+
   return (
     <Modal
       open={open}

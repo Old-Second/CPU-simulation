@@ -6,7 +6,7 @@ import {Form, Input, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../../utils/selector.ts";
 
-const TunnelOut = () => {
+const TunnelOut = ({preview = false}: { preview?: boolean }) => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
@@ -15,30 +15,30 @@ const TunnelOut = () => {
     netName: "TunnelOut",
     rotation: 0,
   });
-  
+
   useEffect(() => {
     setTunnelOutData((getChipData(nodeId) ?? getChipData('tunnelOut')) as { netName: string; rotation: number; });
   }, [chipData, getChipData, nodeId]);
   useEffect(() => {
     updateNodeInternals(nodeId);
   }, [nodeId, tunnelOutData, updateNodeInternals]);
-  
+
   // 当数据或节点 ID 更改时更新
   useEffect(() => {
       setTunnelOutInput(getData('TunnelOut', tunnelOutData.netName))
     }, [data, getData, nodeId, tunnelOutData.netName]
   );
-  
+
   // 更新输出
   useEffect(() => {
     updateData(nodeId, 'out', tunnelOutInput);
   }, [edges, tunnelOutInput, nodeId, updateData]);
-  
+
   const [open, setOpen] = useState(false);
   const openEditTunnelOut = () => setOpen(true);
   const closeEditTunnelOut = () => setOpen(false);
-  
-  
+
+
   // 处理表单提交
   const handleSubmit = (values: { netName: string; rotation: number; }) => {
     setTunnelOutData({...values});
@@ -47,12 +47,18 @@ const TunnelOut = () => {
     void message.success('配置成功');
     closeEditTunnelOut();
   };
-  
+
+  if (preview) {
+    return (
+      <div className="tunnelOut" style={{transform: `rotate(${-tunnelOutData.rotation}deg)`}}></div>
+    )
+  }
+
   return (
     <>
       <h3>{tunnelOutData.netName}</h3>
       <div className="tunnelOut" style={{transform: `rotate(${-tunnelOutData.rotation}deg)`}}>
-        
+
         <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditTunnelOut}/>
           <TunnelOutModal open={open} closeEditTunnelOut={closeEditTunnelOut} initialValues={tunnelOutData}
@@ -78,7 +84,7 @@ interface TunnelOutModalProps {
 
 const TunnelOutModal: React.FC<TunnelOutModalProps> = ({open, closeEditTunnelOut, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
-  
+
   const handleOk = () => {
     form
       .validateFields()
@@ -87,7 +93,7 @@ const TunnelOutModal: React.FC<TunnelOutModalProps> = ({open, closeEditTunnelOut
         console.log('Validate Failed:', info);
       });
   };
-  
+
   return (
     <Modal
       open={open}

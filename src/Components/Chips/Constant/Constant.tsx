@@ -5,28 +5,28 @@ import useDataStore from "../../../store/useDataStore.ts";
 import {selector} from "../../../utils/selector.ts";
 import {Form, Input, message, Modal} from "antd";
 
-const Constant = () => {
+const Constant = ({preview = false}: { preview?: boolean }) => {
   const {edges, updateData, chipData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const [constantData, setConstantData] = useState({
     label: "Constant",
     value: 1,
   });
-  
+
   useEffect(() => {
     setConstantData((getChipData(nodeId) ?? getChipData('constant')) as { label: string, value: number });
   }, [chipData, getChipData, nodeId]);
-  
+
   // 更新输出
   useEffect(() => {
     updateData(nodeId, 'out', Number(constantData.value))
   }, [edges, constantData.value, nodeId, updateData]);
-  
+
   const [open, setOpen] = useState(false);
   const openEditConstant = () => setOpen(true);
   const closeEditConstant = () => setOpen(false);
-  
-  
+
+
   // 处理表单提交
   const handleSubmit = (values: { label: string; value: string; }) => {
     const parsedValue = parseInt(values.value, 16);
@@ -35,7 +35,15 @@ const Constant = () => {
     void message.success('配置成功');
     closeEditConstant();
   };
-  
+
+  if (preview) {
+    return (
+      <div style={{padding: 2}}>
+        <h2>1</h2>
+      </div>
+    );
+  }
+
   return (
     <>
       <div style={{padding: 2}}>
@@ -66,11 +74,11 @@ interface ConstantModalProps {
 const ConstantModal: React.FC<ConstantModalProps> = ({open, closeEditConstant, initialValues, onSubmit}) => {
   const [form] = Form.useForm();
   const [inputValue, setInputValue] = useState(String(initialValues.value));
-  
+
   useEffect(() => {
     setInputValue(String(initialValues.value));
   }, [initialValues.value]);
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     if (!value.startsWith('0x')) {
@@ -79,7 +87,7 @@ const ConstantModal: React.FC<ConstantModalProps> = ({open, closeEditConstant, i
     setInputValue(value);
     form.setFieldsValue({value});
   };
-  
+
   const handleOk = () => {
     form
       .validateFields()
@@ -94,7 +102,7 @@ const ConstantModal: React.FC<ConstantModalProps> = ({open, closeEditConstant, i
         console.log('Validate Failed:', info);
       });
   };
-  
+
   return (
     <Modal
       open={open}

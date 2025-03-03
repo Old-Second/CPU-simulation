@@ -3,7 +3,7 @@
     height: 50px;
     border: 5px solid black;
     background-color: white;
-    position: absolute;
+    position: relative;
 }
 
 .handInput-circle {

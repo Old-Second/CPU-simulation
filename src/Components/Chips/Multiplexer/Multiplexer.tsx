@@ -6,7 +6,7 @@ import {Form, InputNumber, Input, message, Modal, Select} from "antd";
 import {EditOutlined} from "@ant-design/icons/lib/icons";
 import {selector} from "../../../utils/selector.ts";
 
-const Multiplexer = () => {
+const Multiplexer = ({preview = false}: { preview?: boolean }) => {
   const {edges, data, chipData, updateData, getData, updateChipData, getChipData} = useDataStore(selector);
   const nodeId = useNodeId() as string;
   const updateNodeInternals = useUpdateNodeInternals();
@@ -20,7 +20,7 @@ const Multiplexer = () => {
     dataBits: 1,
     numberOfSelectorBits: 1
   });
-  
+
   useEffect(() => {
     setMultiplexerData((getChipData(nodeId) ?? getChipData('multiplexer')) as {
       label: string,
@@ -32,7 +32,7 @@ const Multiplexer = () => {
   useEffect(() => {
     updateNodeInternals(nodeId);
   }, [multiplexerData, nodeId, updateNodeInternals]);
-  
+
   useEffect(() => {
       setMultiplexerInput({
         input: Array.from({length: Math.pow(2, multiplexerData.numberOfSelectorBits)}, (_, index) =>
@@ -42,7 +42,7 @@ const Multiplexer = () => {
       })
     }, [data, getData, multiplexerData.numberOfSelectorBits, nodeId]
   );
-  
+
   useEffect(() => {
     const {input, sel} = multiplexerInput;
     const outBinaryString = (input[sel]?.toString(2) ?? '');
@@ -50,11 +50,11 @@ const Multiplexer = () => {
     const out = parseInt(outBinaryString.slice(-multiplexerData.dataBits), 2);
     updateData(nodeId, 'out', out);
   }, [edges, multiplexerInput, multiplexerData.dataBits, nodeId, updateData]);
-  
+
   const [open, setOpen] = useState(false);
   const openEditMultiplexer = () => setOpen(true);
   const closeEditMultiplexer = () => setOpen(false);
-  
+
   // 处理表单提交
   const handleSubmit = (values: {
     label: string;
@@ -68,8 +68,24 @@ const Multiplexer = () => {
     void message.success('配置成功');
     closeEditMultiplexer();
   };
-  
-  
+
+  if (preview) {
+    return (
+      <div className="multiplexer-container">
+        <div className={`multiplexer ${nodeId}`} style={{
+          transform: `rotate(${-multiplexerData.rotation}deg)`,
+          height: `${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) - 1) + 30 + 10}px`,
+        }}>
+          <style>
+            {`.${nodeId}::before { height: ${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) - 1) + 30}px; }`}
+          </style>
+
+          <p className={'multiplexer-port multiplexer-0'}>0</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="multiplexer-container">
       <h3>{multiplexerData.label}</h3>
@@ -80,16 +96,16 @@ const Multiplexer = () => {
         <style>
           {`.${nodeId}::before { height: ${30 * (Math.pow(2, multiplexerData.numberOfSelectorBits) - 1) + 30}px; }`}
         </style>
-        
+
         {/* 节点端口 */}
         <p className={'multiplexer-port multiplexer-0'}>0</p>
-        
+
         <NodeToolbar offset={0}>
           <EditOutlined onClick={openEditMultiplexer}/>
           <MultiplexerModal open={open} closeEditMultiplexer={closeEditMultiplexer} initialValues={multiplexerData}
                             onSubmit={handleSubmit}/>
         </NodeToolbar>
-        
+
         {Array.from({length: Math.pow(2, multiplexerData.numberOfSelectorBits)}, (_, i) => {
             const leftPosition = 30 * i;
             return <Handle key={`${nodeId}-input-${i}`} type='target' id={`input-${i}`} position={Position.Left}
@@ -124,7 +140,7 @@ const MultiplexerModal: React.FC<MultiplexerModalProps> = ({
                                                              onSubmit
                                                            }) => {
   const [form] = Form.useForm();
-  
+
   const handleOk = () => {
     form
       .validateFields()
@@ -133,7 +149,7 @@ const MultiplexerModal: React.FC<MultiplexerModalProps> = ({
         console.log('Validate Failed:', info);
       });
   };
-  
+
   return (
     <Modal
       open={open}

@@ -22,24 +22,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
-      - uses: pnpm/action-setup@v3
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
         with:
-          version: 8
-      - name: Setup Node main
+          version: 9.14.4
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: pnpm
-      - name: Setup Pages main
+      - name: Configure Pages
         uses: actions/configure-pages@v4
-      - name: Install dependencies main
-        run: pnpm install
-      - name: Build main
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build project
         run: pnpm run build
-      - name: Upload artifact main
-        uses: actions/upload-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: main
+          name: main-branch
           path: dist
 
   build-digitalTube:
@@ -50,6 +52,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: digitalTube
+          fetch-depth: 0
       - name: Setup Node digitalTube
         uses: actions/setup-node@v4
         with:
@@ -65,9 +68,9 @@ jobs:
         run: |
           mkdir -p dist/digitalTube
           cd dist
-          mv `ls|grep -v "digitalTube"` digitalTube
+          mv !(digitalTube) digitalTube/ 2>/dev/null || true
       - name: Upload artifact digitalTube
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: digitalTube
           path: dist/digitalTube
@@ -81,18 +84,15 @@ jobs:
     name: Deploy
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: main
           path: dist
-      - uses: actions/download-artifact@v3
+      - name: Download digitalTube artifacts
+        uses: actions/download-artifact@v4
         with:
-          name: digitalTube
+          name: digitalTube-branch
           path: dist/digitalTube
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

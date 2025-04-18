@@ -2,15 +2,15 @@ import {
   BackgroundVariant, Edge, Node, OnConnect, OnEdgesChange, OnEdgesDelete, OnNodesChange, Panel, ReactFlowInstance,
 } from "reactflow";
 import './index.css'
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useRef, useState, memo} from 'react';
 import {Background, Controls, MiniMap, ReactFlow} from 'reactflow';
 import 'reactflow/dist/style.css';
 import useDataStore from "../../store/useDataStore.ts";
-import {NodeTypes} from "../../type/NodeTypes.ts";
+import {EdgeTypes, NodeTypes} from "../../type/NodeTypes.ts";
 import addNode from "../../utils/addNode.ts";
 import Save from "../Save/Save.tsx";
 
-
+// 使用选择器优化性能，只获取需要的状态
 const selector = (state: {
   nodes: Node[];
   edges: Edge[];
@@ -27,14 +27,14 @@ const selector = (state: {
   onConnect: state.onConnect,
 });
 
-const CircuitDiagram = () => {
-  const reactFlowWrapper = useRef(null);
+// 使用memo优化组件，避免不必要的重渲染
+const CircuitDiagram = memo(() => {
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const {nodes, edges, onNodesChange, onEdgesChange, onEdgesDelete, onConnect} = useDataStore(selector);
-  
   const diagramRef = useRef<HTMLDivElement>(null);
-  
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-  
+
+  // 处理拖拽悬停事件
   const onDragOver = useCallback((event: {
     preventDefault: () => void;
     dataTransfer: { dropEffect: string; };
@@ -42,7 +42,8 @@ const CircuitDiagram = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   }, []);
-  
+
+  // 处理拖拽放置事件
   const onDrop = useCallback(
     (event: {
       preventDefault: () => void;
@@ -51,23 +52,37 @@ const CircuitDiagram = () => {
       clientY: number;
     }) => {
       event.preventDefault();
-      
+
       const type = event.dataTransfer.getData('application/reactflow');
-      
-      // check if the dropped element is valid
+
+      // 检查拖放的元素是否有效
       if (typeof type === 'undefined' || !type) {
         return;
       }
-      
-      const position = rfInstance!.screenToFlowPosition({
+
+      // 确保rfInstance存在
+      if (!rfInstance) {
+        console.warn('ReactFlow实例尚未初始化');
+        return;
+      }
+
+      // 将屏幕坐标转换为流坐标
+      const position = rfInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
+      
+      // 添加新节点
       addNode(type, position);
     },
     [rfInstance],
   );
-  
+
+  // 处理ReactFlow初始化
+  const onInit = useCallback((instance: ReactFlowInstance) => {
+    setRfInstance(instance);
+  }, []);
+
   return (
     <div style={{height: '100vh', width: '88vw'}} ref={reactFlowWrapper}>
       <ReactFlow
@@ -77,12 +92,12 @@ const CircuitDiagram = () => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={NodeTypes}
-        // edgeTypes={edgeTypes}
+        edgeTypes={EdgeTypes}
         proOptions={{hideAttribution: true}}
         fitView={true}
         fitViewOptions={{duration: 500}}
         ref={diagramRef}
-        onInit={setRfInstance}
+        onInit={onInit}
         onDrop={onDrop}
         onDragOver={onDragOver}
         onEdgesDelete={onEdgesDelete}
@@ -96,6 +111,6 @@ const CircuitDiagram = () => {
       </ReactFlow>
     </div>
   );
-};
+});
 
 export default CircuitDiagram;

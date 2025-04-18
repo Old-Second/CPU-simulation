@@ -127,30 +127,57 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
     }))
   );
 
+  // 安全的十六进制转换函数
+  const safeHexParse = useCallback((value: string): number => {
+    try {
+      // 移除可能的0x前缀
+      const cleanValue = value.replace(/^0x/i, '');
+      // 尝试解析十六进制
+      const parsed = parseInt(cleanValue, 16);
+      return isNaN(parsed) ? 0 : parsed;
+    } catch {
+      return 0;
+    }
+  }, []);
+
+  // 安全的十六进制格式化函数
+  const formatHex = useCallback((value: number): string => {
+    try {
+      // 始终以十六进制格式显示
+      return `0x${value.toString(16).toUpperCase()}`;
+    } catch {
+      return '0x0';
+    }
+  }, []);
+
   // 生成数据源
   const generateDataSource = useCallback((addressBits: number) => {
-    const rowCount = Math.pow(2, addressBits);
-    const newData = Array.from({length: rowCount}, (_, i) => ({
-      key: i,
-      address: i > 9 ? `0x${i.toString(16).toUpperCase()}` : i.toString(),
-      value: '0',
-    }));
-    if (initialValues.dataSource[0] != undefined) {
-      Array.from({length: rowCount}, (_, i) => {
-          const newValue = initialValues.dataSource[i]?.toString() ?? '';
-          const maxHexValue = Math.pow(2, initialValues.dataBits) - 1;
-          if (parseInt(newValue, 16) > maxHexValue) {
-            // 如果超出最大值，设置为最大可能的值
-            newData[i].value = maxHexValue > 9 ? `0x${maxHexValue.toString(16).toUpperCase()}` : String(maxHexValue);
-          } else {
-            // 未超出最大值，直接更新为新输入的值，保留十六进制格式
-            newData[i].value = parseInt(newValue, 16) > 9 ? `0x${newValue}` : newValue;
-          }
+    try {
+      const rowCount = Math.pow(2, addressBits);
+
+      const newData = Array.from({length: rowCount}, (_, i) => {
+        const address = i > 9 ? `0x${i.toString(16).toUpperCase()}` : i.toString();
+        let value = '0x0';
+        
+        if (initialValues.dataSource[i] !== undefined) {
+          // 直接使用十进制值，但在显示时转换为十六进制
+          const decimalValue = initialValues.dataSource[i];
+          value = formatHex(decimalValue);
         }
-      );
+        
+        return {
+          key: i,
+          address,
+          value
+        };
+      });
+      
+      setDataSource(newData);
+    } catch (error) {
+      console.error('生成数据源时出错:', error);
+      void message.error('生成数据源失败');
     }
-    setDataSource(newData);
-  }, [initialValues.dataBits, initialValues.dataSource]);
+  }, [initialValues.dataBits, initialValues.dataSource, formatHex]);
 
   useEffect(() => {
     generateDataSource(initialValues.addressBits);
@@ -161,11 +188,18 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
     form
       .validateFields()
       .then((values) => {
-        const decimalDataSource = dataSource.reduce((acc, item, index) => {
-          acc[index] = parseInt(item.value, 16);
-          return acc;
-        }, {} as { [address: string]: number });
-        onSubmit({...values, dataSource: decimalDataSource});
+        try {
+          const decimalDataSource = dataSource.reduce((acc, item) => {
+            // 将十六进制字符串转换为十进制数值
+            acc[item.key] = safeHexParse(item.value);
+            return acc;
+          }, {} as { [address: string]: number });
+          
+          onSubmit({...values, dataSource: decimalDataSource});
+        } catch (error) {
+          console.error('处理表单数据时出错:', error);
+          void message.error('提交失败');
+        }
       })
       .catch((info) => {
         console.log('Validate Failed:', info);
@@ -173,18 +207,21 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
   };
 
   const inputDataSource = useCallback((newValue: string, index: number) => {
-    const newData = [...dataSource];
-    const maxHexValue = Math.pow(2, dataBits) - 1;
-    // 检查输入的值是否小于2^(Data Bits)位的十六进制数字
-    if (parseInt(newValue, 16) > maxHexValue) {
-      // 如果超出最大值，设置为最大可能的值
-      newData[index].value = maxHexValue > 9 ? `0x${maxHexValue.toString(16).toUpperCase()}` : String(maxHexValue);
-    } else {
-      // 未超出最大值，直接更新为新输入的值，保留十六进制格式
-      newData[index].value = parseInt(newValue, 16) > 9 ? `0x${newValue}` : newValue;
+    try {
+      const newData = [...dataSource];
+      const maxValue = Math.pow(2, dataBits) - 1;
+      
+      // 确保输入值包含0x前缀
+      const valueWithPrefix = newValue.startsWith('0x') ? newValue : `0x${newValue}`;
+      const parsedValue = safeHexParse(valueWithPrefix);
+      
+      newData[index].value = formatHex(Math.min(parsedValue, maxValue));
+      setDataSource(newData);
+    } catch (error) {
+      console.error('更新数据源时出错:', error);
+      void message.error('更新失败');
     }
-    setDataSource(newData);
-  }, [dataBits, dataSource])
+  }, [dataBits, dataSource, safeHexParse, formatHex]);
 
   return (
     <Modal
@@ -231,6 +268,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
               onChange={(e) => {
                 inputDataSource(e.target.value.toUpperCase(), index)
               }}
+              placeholder="十六进制格式，如0x1F"
             />
           )}
         />

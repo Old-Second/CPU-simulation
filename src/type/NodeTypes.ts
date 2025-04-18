@@ -14,6 +14,8 @@ import Constant from "../Components/Chips/Constant/Constant.tsx";
 import Or from "../Components/Chips/Or/Or.tsx";
 import React from "react";
 import {ChipType} from "./Data.ts";
+import NumberEdge from "../Components/NumberEdge/NumberEdge.tsx";
+import CustomPathEdge from "../Components/CustomPathEdge/CustomPathEdge.tsx";
 
 type NodeTypesKeys = {
   [K in ChipType]: React.FC;
@@ -35,10 +37,8 @@ export const NodeTypes: NodeTypesKeys = {
   tunnelIn: TunnelIn,
   tunnelOut: TunnelOut,
 };
-// const edgeTypes = {
-//   step: {
-//     type: 'step',
-//     // label: 'Step Edge',
-//     // style: { stroke: '#f6ab6c' } // 设置样式
-//   }
-// };
+
+export const EdgeTypes = {
+  'number-edge': NumberEdge,
+  'custom-path-edge': CustomPathEdge
+};

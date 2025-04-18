@@ -2,7 +2,13 @@ import useDataStore from "../store/useDataStore.ts";
 import {Node} from "reactflow";
 import {nanoid} from "nanoid";
 
-const addNode = (type: string, position: { x: number, y: number }) => {
+/**
+ * 添加新节点到画布
+ * @param type - 节点类型
+ * @param position - 节点位置
+ */
+const addNode = (type: string, position: { x: number, y: number }): void => {
+  // 获取当前节点列表
   const currentNodeList = useDataStore.getState().nodes;
   
   // 创建一个新节点

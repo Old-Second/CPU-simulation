@@ -26,7 +26,11 @@ const Login = () => {
     userId: '',
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const heartbeatInterval = useRef<number | null>(null)
+  const heartbeatInterval = useRef<number | null>(null);
+  const heartbeatRetryCount = useRef<number>(0);
+  const MAX_RETRY_COUNT = 3;
+  const HEARTBEAT_INTERVAL = 30000; // 30秒
+  const RETRY_DELAY = 5000; // 5秒
   
   const onSubmit = async (values: { username: string; userId: string; }) => {
     setUser({
@@ -43,6 +47,7 @@ const Login = () => {
       closeLogin();
     } catch (error) {
       console.error('记录登录时间时出错:', error);
+      void message.error('登录失败，请重试');
     }
   };
   
@@ -52,20 +57,41 @@ const Login = () => {
         userId: user.userId,
       });
       console.log('心跳信号已更新');
+      heartbeatRetryCount.current = 0; // 重置重试计数
     } catch (error) {
       console.error('心跳检测时出错:', error);
-      // setIsLoggedIn(false);
-      // clearInterval(heartbeatInterval.current as number);
+      heartbeatRetryCount.current += 1;
+      
+      if (heartbeatRetryCount.current >= MAX_RETRY_COUNT) {
+        console.error('心跳检测失败次数过多，停止心跳检测');
+        setIsLoggedIn(false);
+        if (heartbeatInterval.current) {
+          clearInterval(heartbeatInterval.current);
+          heartbeatInterval.current = null;
+        }
+        void message.error('连接已断开，请重新登录');
+        return;
+      }
+      
+      // 等待一段时间后重试
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      void sendHeartbeat();
     }
   }, [user.userId]);
   
   useEffect(() => {
     if (isLoggedIn) {
-      heartbeatInterval.current = setInterval(sendHeartbeat, 30000);
+      // 立即发送第一次心跳
+      void sendHeartbeat();
+      // 设置定期心跳
+      heartbeatInterval.current = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
     }
     
     return () => {
-      clearInterval(heartbeatInterval.current as number);
+      if (heartbeatInterval.current) {
+        clearInterval(heartbeatInterval.current);
+        heartbeatInterval.current = null;
+      }
     };
   }, [isLoggedIn, sendHeartbeat]);
   

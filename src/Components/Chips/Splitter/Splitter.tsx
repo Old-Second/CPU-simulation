@@ -122,17 +122,17 @@ const Splitter = ({preview = false}: { preview?: boolean }) => {
     <div className="splitter-container">
       {/*<h3>{splitterData.label}</h3>*/}
       {/* 输入端口标记 */}
-      {Array.from({length: splitterData.InputSplitting.split(',').length}, (_, i) => {
+      {/* {Array.from({length: splitterData.InputSplitting.split(',').length}, (_, i) => {
         const leftPosition = 15 * i;
         return <p key={`${nodeId}-input-${i}-port`} className={'splitter-port-in'}
                   style={{top: `${leftPosition - 10 + 5}px`}}>{inPort[i]}</p>
-      })}
+      })} */}
       {/* 输出端口标记 */}
-      {Array.from({length: splitterData.OutputSplitting.split(',').length}, (_, i) => {
+      {/* {Array.from({length: splitterData.OutputSplitting.split(',').length}, (_, i) => {
         const rightPosition = 15 * i;
         return <p key={`${nodeId}-output-${i}-port`} className={'splitter-port-out'}
                   style={{top: `${rightPosition - 10 + 5}px`}}>{outPort[i]}</p>
-      })}
+      })} */}
 
       <div className="splitter" style={{
         height: `${15 * (Math.max(splitterData.InputSplitting.split(',').length, splitterData.OutputSplitting.split(',').length) - 1) + 10}px`,

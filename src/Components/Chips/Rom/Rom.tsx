@@ -177,7 +177,7 @@ const RomModal: React.FC<RomModalProps> = ({open, closeEditRom, initialValues, o
       console.error('生成数据源时出错:', error);
       void message.error('生成数据源失败');
     }
-  }, [initialValues.dataBits, initialValues.dataSource, formatHex]);
+  }, [initialValues.dataSource, formatHex]);
 
   useEffect(() => {
     generateDataSource(initialValues.addressBits);
